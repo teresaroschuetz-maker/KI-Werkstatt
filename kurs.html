@@ -15,8 +15,8 @@
    Bleiben die Felder leer, läuft der Kurs im Testmodus und speichert
    nur auf diesem Gerät.
    ================================================================ */
-const SUPABASE_URL = "https://ycyqbkukuvfkdvrgwmja.supabase.co";   // z. B. "https://abcdefgh.supabase.co"
-const SUPABASE_KEY = "sb_publishable_dMTXzCCcogfIeuRXT2YGrg_JGS97V_-";   // der „publishable“ oder „anon“ Key
+const SUPABASE_URL = "";   // z. B. "https://abcdefgh.supabase.co"
+const SUPABASE_KEY = "";   // der „publishable“ oder „anon“ Key
 const WERKSTATT_LINK = "index.html";  // Link zurück zur KI-Werkstatt
 </script>
 
@@ -120,7 +120,7 @@ input:focus{border-color:var(--ink);outline:none}
 .pwrow{display:flex;gap:8px}
 .pwrow input{flex:1}
 .hint{font-size:.95rem;color:var(--soft);margin-top:6px}
-.msg{margin-top:14px;padding:10px 14px;border-radius:12px;background:var(--coral-soft);font-weight:700}
+.msg{white-space:pre-line;margin-top:14px;padding:10px 14px;border-radius:12px;background:var(--coral-soft);font-weight:700}
 .msg.ok{background:var(--mint-soft)}
 .testmode{margin-top:16px;padding:10px 14px;border-radius:12px;background:var(--sun-soft);font-size:.92rem}
 
@@ -523,7 +523,11 @@ async function rpc(fn, body){
   }catch(e){ throw new Error("NETZ"); }
   const t = await r.text(); let d = null;
   try{ d = t ? JSON.parse(t) : null; }catch(e){}
-  if(!r.ok) throw new Error((d && d.message) || "FEHLER");
+  if(!r.ok){
+    const e = new Error((d && d.message) || ("HTTP " + r.status));
+    e.detail = "HTTP " + r.status + (d ? " – " + [d.code, d.message, d.hint].filter(Boolean).join(" · ") : (t ? " – " + t.slice(0, 200) : ""));
+    throw e;
+  }
   return d;
 }
 
@@ -563,13 +567,21 @@ const api = {
 };
 
 const ERR = {
-  NAME_VERGEBEN:"Diesen Spitznamen gibt es schon. Probier einen anderen, zum Beispiel mit einer Zahl dazu.",
+  NAME_VERGEBEN:"Diesen Spitznamen gibt es schon. Warst du schon einmal hier? Dann klick oben auf „Ich war schon da“. Sonst nimm einen anderen Namen, zum Beispiel mit einer Zahl dazu.",
   FALSCH:"Spitzname oder Passwort stimmen nicht. Schau in deinem Heft nach!",
   NAME_LAENGE:"Der Spitzname muss 2 bis 30 Zeichen lang sein.",
   PASSWORT_LAENGE:"Das Passwort muss mindestens 4 Zeichen lang sein.",
   NETZ:"Keine Verbindung zum Internet. Prüf die Verbindung und versuch es nochmal."
 };
-const errText = e => ERR[e.message] || "Da ist etwas schiefgegangen. Versuch es gleich noch einmal.";
+function errText(e){
+  if(ERR[e.message]) return ERR[e.message];
+  const m = e.detail || e.message || "unbekannt";
+  let t = "Da ist etwas schiefgegangen. Bitte sag deiner Lehrerin oder deinem Lehrer Bescheid.";
+  if(/Invalid API key|No API key|apikey|HTTP 401/i.test(m)) t = "Die Verbindung zu Supabase klappt nicht. Der Key oben in kurs.html stimmt vermutlich nicht.";
+  else if(/PGRST202|Could not find the function|HTTP 404/i.test(m)) t = "Die Supabase-Funktionen wurden nicht gefunden. Bitte supabase-setup.sql im SQL Editor ausführen.";
+  else if(/permission denied/i.test(m)) t = "Supabase verweigert den Zugriff. Bitte supabase-setup.sql noch einmal komplett ausführen.";
+  return t + "\n\nTechnische Info: " + m;
+}
 
 /* ================================================================
    ZUSTAND
