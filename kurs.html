@@ -15,8 +15,8 @@
    Bleiben die Felder leer, läuft der Kurs im Testmodus und speichert
    nur auf diesem Gerät.
    ================================================================ */
-const SUPABASE_URL = "https://ycyqbkukuvfkdvrgwmja.supabase.co";   // z. B. "https://abcdefgh.supabase.co"
-const SUPABASE_KEY = "sb_publishable_dMTXzCCcogfIeuRXT2YGrg_JGS97V_-";   // der „publishable“ oder „anon“ Key
+const SUPABASE_URL = "";   // z. B. "https://abcdefgh.supabase.co"
+const SUPABASE_KEY = "";   // der „publishable“ oder „anon“ Key
 const WERKSTATT_LINK = "index.html";  // Link zurück zur KI-Werkstatt
 </script>
 
@@ -109,7 +109,7 @@ a{color:var(--ink)}
 
 /* Login */
 .login{padding:40px 0 60px}
-.login-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}
+.login-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
 .login .lead{font-size:1.2rem;color:var(--soft)}
 .tabs{display:flex;gap:8px;margin-bottom:18px}
 .tab{flex:1;font:inherit;font-weight:700;padding:10px;border-radius:14px;border:3px solid var(--line);background:var(--bg2);color:var(--ink);cursor:pointer}
@@ -246,6 +246,38 @@ input:focus{border-color:var(--ink);outline:none}
 .zeugnis .stars .off{color:#D2DDF0}
 .zeugnis .stars{color:#F2B300}
 
+/* Lern-Name & Passwort */
+.namecard{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--sun-soft);border:3px dashed var(--ink);border-radius:18px;padding:12px 16px}
+.namecard .lname{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.8rem;flex:1;min-width:180px;letter-spacing:.5px;word-break:break-all}
+.why-box{background:var(--sky-soft);border-radius:14px;padding:10px 14px;font-size:.98rem;margin-top:10px}
+.meter{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 4px}
+.meter i{height:12px;border-radius:999px;background:var(--line)}
+.meter.l1 i:nth-child(1){background:var(--wrong)}
+.meter.l2 i:nth-child(-n+2){background:var(--sun)}
+.meter.l3 i:nth-child(-n+3){background:var(--mint)}
+.meter.l4 i{background:var(--mint)}
+.pwcheck{list-style:none;padding:0;margin:6px 0;font-size:.95rem}
+.pwcheck li::before{content:"○ ";color:var(--soft)}
+.pwcheck li.ok::before{content:"✓ ";color:var(--right);font-weight:700}
+.tipbox{background:var(--lilac-soft);border-radius:14px;padding:10px 14px;font-size:.98rem;margin-top:8px}
+.agree{display:flex;gap:10px;align-items:flex-start;font-weight:400;margin-top:16px;cursor:pointer}
+.agree input{width:24px;height:24px;flex:none;margin-top:2px;accent-color:var(--mint)}
+/* Einrichtung */
+.setup{padding:32px 0 60px}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.robots{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:8px}
+.choice-card{font:inherit;color:var(--ink);background:var(--card);border:3px solid var(--line);border-radius:20px;padding:16px;cursor:pointer;text-align:center}
+.choice-card[aria-pressed="true"]{border-color:var(--ink);background:var(--sun-soft);box-shadow:0 5px 0 var(--ink)}
+.choice-card .big{font-size:3rem;display:block;line-height:1.2}
+.choice-card svg{width:100px;height:100px;display:block;margin:0 auto 6px}
+.choice-card b{display:block;font-family:"Baloo 2",sans-serif;font-size:1.25rem}
+.sugg{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.teamtip{background:var(--mint-soft);border-radius:14px;padding:8px 14px;font-size:.97rem;margin-bottom:14px}
+.zeugnis .hand{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin:14px 0 6px}
+.zeugnis .hand span{display:inline-block;width:260px;max-width:100%;border-bottom:3px solid #22245A;height:40px}
+.zeugnis .lern{text-align:center;font-size:.9rem;color:#5A5E8C;margin-bottom:14px}
+@media (max-width:760px){.robots{grid-template-columns:repeat(2,1fr)}.choices{grid-template-columns:1fr}}
+
 @media (max-width:760px){
   .login-grid,.zeugnis .two{grid-template-columns:1fr}
   .stop .dot{width:70px;height:70px;font-size:1.9rem}
@@ -299,7 +331,7 @@ input:focus{border-color:var(--ink);outline:none}
   <div class="wrap login-grid">
     <div>
       <h1>Wie denkt eigentlich ein Computer?</h1>
-      <p class="lead">Geh mit Pixi auf die KI-Lernreise! In 7 Stationen findest du heraus, wie Künstliche Intelligenz lernt, probierst echte KI aus und bekommst am Ende ein Abzeichen und ein Zeugnis.</p>
+      <p class="lead">Allein oder zu zweit: Geh mit deinem eigenen Roboter auf die KI-Lernreise! In 7 Stationen findest du heraus, wie Künstliche Intelligenz lernt, probierst echte KI aus und bekommst am Ende ein Abzeichen und ein Zeugnis.</p>
       <div class="pixi-row">
         <svg class="pixi" aria-hidden="true"><use href="#pixi"/></svg>
         <div class="bubble"><p>Du kannst jederzeit Pause machen. Wenn du wiederkommst, geht es genau dort weiter, wo du aufgehört hast.</p></div>
@@ -313,25 +345,62 @@ input:focus{border-color:var(--ink);outline:none}
         <button class="tab" role="tab" id="tabBack" aria-selected="false" type="button">Ich war schon da</button>
       </div>
       <form id="loginForm" autocomplete="off">
-        <label for="fName">Dein Spitzname</label>
-        <input type="text" id="fName" maxlength="30" required>
-        <p class="hint" id="nameHint">Nimm einen Spitznamen, nicht deinen ganzen echten Namen. Zum Beispiel „Sternfuchs7“.</p>
+        <div id="newName">
+          <p style="font-weight:700;margin:0 0 8px">Dein geheimer Lern-Name</p>
+          <div class="namecard"><span class="lname" id="genName"></span><button class="btn small" type="button" id="reroll">🔄 Anderer Name</button></div>
+          <div class="why-box">🕵️ <b>Warum kein echter Name?</b> Im Internet verraten wir nicht, wer wir wirklich sind. Darum bekommst du einen Lern-Namen. Deinen echten Namen schreibst du hier nirgends hin, auch nicht ins Passwort.</div>
+        </div>
+        <div id="oldName" hidden>
+          <label for="fName">Dein Lern-Name</label>
+          <input type="text" id="fName" maxlength="30" autocapitalize="off" spellcheck="false">
+          <p class="hint">So wie er in deinem Heft steht, zum Beispiel „Nebeldrache42“.</p>
+        </div>
 
-        <label for="fPw">Dein Passwort</label>
+        <label for="fPw" id="pwLabel">Denk dir ein Passwort aus</label>
         <div class="pwrow">
           <input type="password" id="fPw" maxlength="60" required>
           <button class="btn small" type="button" id="eye" aria-label="Passwort zeigen">👁️</button>
         </div>
-        <div id="pw2Wrap">
+        <div id="pwHelp">
+          <div class="meter" id="meter" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <p class="hint" id="meterText" aria-live="polite" style="margin-top:0">Wie stark ist dein Passwort?</p>
+          <ul class="pwcheck" id="pwcheck">
+            <li data-k="len">mindestens 8 Zeichen lang</li>
+            <li data-k="num">eine Zahl</li>
+            <li data-k="mix">Groß- und Kleinbuchstaben oder ein Zeichen wie - ! #</li>
+            <li data-k="safe">nicht leicht zu erraten: kein 1234, kein Name, kein Geburtsjahr</li>
+          </ul>
+          <div class="tipbox">💡 <b>Der Trick für starke Passwörter:</b> Nimm 3 Wörter, die gar nicht zusammenpassen, und eine Zahl. Zum Beispiel <b>Gurke-Rakete-Socke5</b>. Das ist lang, lustig und leicht zu merken. Erfinde aber dein eigenes!</div>
           <label for="fPw2">Passwort noch einmal</label>
           <input type="password" id="fPw2" maxlength="60">
-          <p class="hint">Mindestens 4 Zeichen. Schreib Spitzname und Passwort in dein Heft, damit du sie nicht vergisst!</p>
+          <label class="agree"><input type="checkbox" id="fNoted"><span>Ich habe meinen Lern-Namen und mein Passwort in mein Heft geschrieben. Mein Passwort verrate ich niemandem, nur meiner Lehrerin oder meinem Lehrer.</span></label>
         </div>
         <div style="margin-top:18px"><button class="btn go" type="submit" id="loginBtn">Los geht’s!</button></div>
         <div class="msg" id="loginMsg" hidden></div>
       </form>
       <div class="testmode" id="testNote" hidden><b>Testmodus:</b> Supabase ist noch nicht eingetragen. Der Fortschritt wird nur in diesem Browser gespeichert.</div>
     </div>
+  </div>
+</section>
+
+<!-- EINRICHTUNG -->
+<section id="setup" class="setup" hidden>
+  <div class="wrap">
+    <h2>Wie lernst du?</h2>
+    <p>Du kannst die Lernreise allein machen oder zu zweit mit einem anderen Kind an einem Gerät.</p>
+    <div class="choices" id="teamChoice">
+      <button class="choice-card" data-team="1" type="button" aria-pressed="false"><span class="big" aria-hidden="true">🧒</span><b>Allein</b>Ich mache die Reise selbst.</button>
+      <button class="choice-card" data-team="2" type="button" aria-pressed="false"><span class="big" aria-hidden="true">🧒🧒</span><b>Zu zweit</b>Wir machen die Reise gemeinsam.</button>
+    </div>
+    <div class="why-box" id="teamInfo" hidden>👥 <b>So klappt’s zu zweit:</b> Ihr teilt euch einen Lern-Namen und ein Passwort. Wechselt euch ab: Eine Person liest vor, die andere klickt. Besprecht jede Antwort, bevor ihr klickt. Macht die Reise immer gemeinsam weiter.</div>
+
+    <h2 style="margin-top:36px" id="robHead">Such dir deinen Roboter aus!</h2>
+    <div class="robots" id="robotGrid"></div>
+    <label for="robName" id="robLabel">Wie soll dein Roboter heißen?</label>
+    <input type="text" id="robName" maxlength="14" autocomplete="off" style="max-width:360px">
+    <div class="sugg" id="robSugg"></div>
+    <p class="hint">Gib deinem Roboter einen Fantasienamen. Er begleitet dich auf der ganzen Reise.</p>
+    <div style="margin-top:24px"><button class="btn go" id="setupDone" type="button" disabled>Los geht’s mit meinem Roboter!</button></div>
   </div>
 </section>
 
@@ -370,7 +439,7 @@ input:focus{border-color:var(--ink);outline:none}
     <div class="badge-wrap" id="badgeWrap"></div>
     <div class="no-print" style="text-align:center;margin-bottom:24px">
       <h2 id="finTitle"></h2>
-      <p>Hier ist dein Zeugnis. Du kannst es ausdrucken oder als PDF speichern.</p>
+      <p>Hier ist das Zeugnis. Druck es aus und trag erst dann deinen echten Namen mit der Hand ein.</p>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
         <button class="btn go" type="button" onclick="window.print()">🖨️ Zeugnis drucken</button>
         <button class="btn" type="button" id="finToMap">🗺️ Zur Karte</button>
@@ -470,7 +539,7 @@ const STATIONS = [
     {q:"Woran erkennst du am besten, ob ein Bild echt ist?", o:["Daran, woher es kommt und wer es gemacht hat","An den Farben","Daran, wie viele Likes es hat"], a:0, why:"Die Quelle ist am wichtigsten. KI-Bilder werden nämlich immer besser."}
   ]}
 ]},
-{ id:"s7", title:"KI-Profi werden", emoji:"🤝", color:"var(--mint)", min:20, steps:[
+{ id:"s7", title:"KI-Profi werden", emoji:"🤝", color:"var(--mint)", min:25, steps:[
   {t:"info", text:"Fast geschafft! Zum Schluss geht es darum, wie man <b>klug und freundlich</b> mit KI umgeht. Auch im Internet und mit KI gilt: Wir sind fair zueinander und passen auf uns auf."},
   {t:"sort", task:"Darf ich das einer KI erzählen?", bins:["👍 Ist okay","✋ Lieber nicht"], items:[
     {e:"🐶", n:"Mein Lieblingstier", b:0, why:"Das ist kein Geheimnis. Das darfst du gern erzählen."},
@@ -481,6 +550,14 @@ const STATIONS = [
     {e:"😂", n:"Ein Witz", b:0, why:"Witze sind okay!"},
     {e:"📞", n:"Meine Telefonnummer", b:1, why:"Deine Nummer bleibt bei dir."},
     {e:"🍪", n:"Wie man Kekse backt", b:0, why:"Gute Frage! Back aber am besten mit einem Erwachsenen."}
+  ]},
+  {t:"sort", task:"Starkes oder schwaches Passwort?", bins:["💪 Stark","😟 Schwach"], items:[
+    {e:"🔢", n:"1234", b:1, why:"Das probieren alle als Erstes aus."},
+    {e:"🦔", n:"Wolke-Igel-Trompete8", b:0, why:"Drei Wörter, die nicht zusammenpassen, und eine Zahl: lang und schwer zu erraten."},
+    {e:"🎂", n:"Lena2016", b:1, why:"Name und Geburtsjahr können andere leicht herausfinden."},
+    {e:"🔤", n:"passwort", b:1, why:"Das ist eines der häufigsten Passwörter überhaupt."},
+    {e:"🚀", n:"Rakete!Gurke#Mond3", b:0, why:"Lang, mit Zeichen und einer Zahl. Super!"},
+    {e:"⌨️", n:"qwertz", b:1, why:"Das sind einfach Tasten, die nebeneinander liegen."}
   ]},
   {t:"quiz", label:"Was ist fair?", qs:[
     {q:"Deine Freundin will mit KI ein lustiges Bild von einem Mitschüler machen und es in die Klassengruppe schicken.", o:["Lustig, mach doch!","Nein, das kann ihn verletzen. Ohne seine Erlaubnis geht das gar nicht."], a:1, why:"Was für die einen lustig ist, kann für andere sehr wehtun."},
@@ -567,10 +644,10 @@ const api = {
 };
 
 const ERR = {
-  NAME_VERGEBEN:"Diesen Spitznamen gibt es schon. Warst du schon einmal hier? Dann klick oben auf „Ich war schon da“. Sonst nimm einen anderen Namen, zum Beispiel mit einer Zahl dazu.",
-  FALSCH:"Spitzname oder Passwort stimmen nicht. Schau in deinem Heft nach!",
-  NAME_LAENGE:"Der Spitzname muss 2 bis 30 Zeichen lang sein.",
-  PASSWORT_LAENGE:"Das Passwort muss mindestens 4 Zeichen lang sein.",
+  NAME_VERGEBEN:"Diesen Lern-Namen gibt es schon.",
+  FALSCH:"Lern-Name oder Passwort stimmen nicht. Schau in deinem Heft nach!",
+  NAME_LAENGE:"Der Lern-Name muss 2 bis 30 Zeichen lang sein.",
+  PASSWORT_LAENGE:"Das Passwort ist zu kurz.",
   NETZ:"Keine Verbindung zum Internet. Prüf die Verbindung und versuch es nochmal."
 };
 function errText(e){
@@ -600,7 +677,9 @@ function freshProgress(f){
     done: Array.isArray(f.done) ? f.done : [],
     stars: f.stars && typeof f.stars === "object" ? f.stars : {},
     pledge: Array.isArray(f.pledge) ? f.pledge : [],
-    finished: f.finished || null
+    finished: f.finished || null,
+    team: f.team === 2 ? 2 : (f.team === 1 ? 1 : null),
+    robot: f.robot && f.robot.id && f.robot.n ? f.robot : null
   };
 }
 
@@ -623,7 +702,7 @@ function setSession(){ try{ sessionStorage.setItem("kikurs_session", JSON.string
 function clearSession(){ try{ sessionStorage.removeItem("kikurs_session"); }catch(e){} }
 
 function show(id){
-  ["login","map","station","finish"].forEach(x => $("#" + x).hidden = x !== id);
+  ["login","setup","map","station","finish"].forEach(x => $("#" + x).hidden = x !== id);
   $("#pauseBtn").hidden = id === "login";
   window.scrollTo(0, 0);
 }
@@ -632,14 +711,49 @@ function show(id){
    ANMELDEN
    ================================================================ */
 let mode = "new";
+const NA = ["Stern","Mond","Blitz","Sonnen","Wolken","Funken","Pixel","Raketen","Zauber","Schnee","Wirbel","Kometen","Nebel","Glitzer","Donner"];
+const NB = ["fuchs","eule","panda","otter","igel","tiger","delfin","falke","koala","pinguin","biber","luchs","drache","dachs","wal"];
+const pick = a => a[Math.floor(Math.random() * a.length)];
+function newLernName(){ $("#genName").textContent = pick(NA) + pick(NB) + (10 + Math.floor(Math.random() * 90)); $("#fNoted").checked = false; pwUpdate(); }
+
+const BAD = ["1234","12345","123456","1234567","12345678","123456789","passwort","password","qwertz","qwerty","abcd","abcdef","abc123","hallo","hallo123","111111","000000","asdf","asdfgh","gurke-rakete-socke5"];
+function pwCheck(p, name){
+  const low = p.toLowerCase(), stem = (name || "").toLowerCase().replace(/\d+$/, "");
+  const c = {
+    len: p.length >= 8,
+    num: /\d/.test(p),
+    mix: (/[A-ZÄÖÜ]/.test(p) && /[a-zäöüß]/.test(p)) || /[^A-Za-zÄÖÜäöüß0-9]/.test(p),
+    safe: p.length >= 4 && !BAD.includes(low) && !(stem.length > 2 && low.includes(stem)) && !/^\d+$/.test(p) && !/(19|20)\d\d/.test(p) && !/^(.)\1+$/.test(p)
+  };
+  let lvl = 0;
+  if(p.length) lvl = c.safe ? 1 + [c.len, c.num, c.mix].filter(Boolean).length : 1;
+  if(c.safe && p.length >= 14) lvl = 4;
+  return {c, lvl, ok: p.length >= 6 && c.safe};
+}
+function pwUpdate(){
+  if(mode !== "new") return;
+  const p = $("#fPw").value, r = pwCheck(p, $("#genName").textContent);
+  $("#meter").className = "meter l" + r.lvl;
+  $("#pwcheck").querySelectorAll("li").forEach(li => li.classList.toggle("ok", !!p && r.c[li.dataset.k]));
+  $("#meterText").textContent = !p ? "Wie stark ist dein Passwort?"
+    : !r.c.safe ? "😟 Schwach: Das kann jemand leicht erraten."
+    : p.length < 6 ? "😟 Noch zu kurz: mindestens 6 Zeichen."
+    : ["", "😟 Schwach: Mach es länger und mischer.", "🙂 Geht so: Da geht noch mehr!", "💪 Stark!", "🦸 Super stark!"][r.lvl];
+}
+$("#fPw").addEventListener("input", pwUpdate);
+$("#reroll").onclick = newLernName;
+
 function setMode(m){
   mode = m;
   $("#tabNew").setAttribute("aria-selected", m === "new");
   $("#tabBack").setAttribute("aria-selected", m === "back");
-  $("#pw2Wrap").hidden = m !== "new";
-  $("#nameHint").hidden = m !== "new";
+  $("#newName").hidden = m !== "new";
+  $("#oldName").hidden = m !== "back";
+  $("#pwHelp").hidden = m !== "new";
+  $("#pwLabel").textContent = m === "new" ? "Denk dir ein Passwort aus" : "Dein Passwort";
   $("#loginBtn").textContent = m === "new" ? "Los geht’s!" : "Weitermachen";
   $("#loginMsg").hidden = true;
+  pwUpdate();
 }
 $("#tabNew").onclick = () => setMode("new");
 $("#tabBack").onclick = () => setMode("back");
@@ -652,13 +766,23 @@ function loginMsg(t, ok){ const m = $("#loginMsg"); m.textContent = t; m.classNa
 
 $("#loginForm").onsubmit = async ev => {
   ev.preventDefault();
-  const n = $("#fName").value.trim(), p = $("#fPw").value;
-  if(mode === "new" && p !== $("#fPw2").value){ loginMsg("Die beiden Passwörter sind nicht gleich. Tipp sie nochmal ein."); return; }
+  const p = $("#fPw").value;
+  if(mode === "new"){
+    const r = pwCheck(p, $("#genName").textContent);
+    if(!r.ok){ loginMsg("Dein Passwort ist noch zu schwach. Probier den Trick mit den 3 Wörtern und einer Zahl!"); return; }
+    if(p !== $("#fPw2").value){ loginMsg("Die beiden Passwörter sind nicht gleich. Tipp sie nochmal ein."); return; }
+    if(!$("#fNoted").checked){ loginMsg("Schreib zuerst deinen Lern-Namen und dein Passwort ins Heft und setz dann das Häkchen."); return; }
+  }else if(!$("#fName").value.trim() || !p){ loginMsg("Gib deinen Lern-Namen und dein Passwort ein."); return; }
   $("#loginBtn").disabled = true;
   try{
-    const r = mode === "new" ? await api.register(n, p) : await api.login(n, p);
+    const r = mode === "new" ? await api.register($("#genName").textContent, p) : await api.login($("#fName").value.trim(), p);
     startSession(r.name, p, r.fortschritt);
-  }catch(e){ loginMsg(errText(e)); }
+  }catch(e){
+    if(mode === "new" && e.message === "NAME_VERGEBEN"){
+      newLernName();
+      loginMsg("Diesen Lern-Namen gab es schon. Du hast einen neuen bekommen. Bitte schreib ihn neu ins Heft und setz das Häkchen wieder.");
+    }else loginMsg(errText(e));
+  }
   $("#loginBtn").disabled = false;
 };
 
@@ -666,16 +790,99 @@ function startSession(name, pw, f){
   S = {name, pw, f:freshProgress(f)};
   setSession();
   $("#fPw").value = ""; $("#fPw2").value = "";
-  renderMap();
+  applyRobot();
+  if(!S.f.team || !S.f.robot) renderSetup(); else renderMap();
 }
 
 $("#pauseBtn").onclick = async () => {
   await save(true);
-  S = null; clearSession(); setStatus("");
-  setMode("back");
-  show("login");
-  loginMsg("Super gemacht! Bis bald. Melde dich nächstes Mal mit „Ich war schon da“ an.", true);
+  clearSession();
+  try{ sessionStorage.setItem("kikurs_bye", "1"); }catch(e){}
+  location.reload();
 };
+
+/* ================================================================
+   ROBOTER & TEAM
+   ================================================================ */
+const PIXI_MARKUP = document.getElementById("pixi").innerHTML;
+const ROBOTS = [
+  {id:"pixi", label:"Funki", svg:PIXI_MARKUP},
+  {id:"kugel", label:"Kugli", svg:'<line x1="44" y1="24" x2="34" y2="8" stroke="#22245A" stroke-width="4" stroke-linecap="round"/><circle cx="33" cy="7" r="6" fill="#FFC83D" stroke="#22245A" stroke-width="3"/><line x1="76" y1="24" x2="86" y2="8" stroke="#22245A" stroke-width="4" stroke-linecap="round"/><circle cx="87" cy="7" r="6" fill="#1FB389" stroke="#22245A" stroke-width="3"/><rect x="6" y="56" width="12" height="24" rx="6" fill="#FFC83D" stroke="#22245A" stroke-width="3"/><rect x="102" y="56" width="12" height="24" rx="6" fill="#FFC83D" stroke="#22245A" stroke-width="3"/><circle cx="60" cy="64" r="44" fill="#9B7BFF" stroke="#22245A" stroke-width="4"/><circle cx="60" cy="56" r="21" fill="#fff" stroke="#22245A" stroke-width="3"/><circle cx="62" cy="58" r="10" fill="#22245A"/><circle cx="66" cy="53" r="3.5" fill="#fff"/><path d="M46 86 Q60 96 74 86" stroke="#22245A" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="38" cy="80" r="4" fill="#FF6B8B" opacity=".7"/><circle cx="82" cy="80" r="4" fill="#FF6B8B" opacity=".7"/>'},
+  {id:"kasten", label:"Kasti", svg:'<rect x="53" y="2" width="14" height="12" rx="3" fill="#FFC83D" stroke="#22245A" stroke-width="3"/><line x1="60" y1="14" x2="60" y2="24" stroke="#22245A" stroke-width="4"/><circle cx="12" cy="52" r="7" fill="#FFC83D" stroke="#22245A" stroke-width="3"/><circle cx="108" cy="52" r="7" fill="#FFC83D" stroke="#22245A" stroke-width="3"/><rect x="18" y="24" width="84" height="56" rx="10" fill="#FF6B8B" stroke="#22245A" stroke-width="4"/><rect x="28" y="35" width="64" height="24" rx="12" fill="#22245A"/><rect x="38" y="41" width="15" height="12" rx="4" fill="#7CF5C9"/><rect x="67" y="41" width="15" height="12" rx="4" fill="#7CF5C9"/><rect x="44" y="65" width="32" height="7" rx="3.5" fill="#fff" stroke="#22245A" stroke-width="2"/><rect x="34" y="82" width="52" height="32" rx="8" fill="#FFC83D" stroke="#22245A" stroke-width="4"/><rect x="43" y="91" width="10" height="7" rx="2" fill="#FF6B8B"/><rect x="58" y="91" width="19" height="7" rx="2" fill="#3FA9F0"/><rect x="43" y="102" width="34" height="5" rx="2.5" fill="#22245A" opacity=".25"/>'},
+  {id:"katze", label:"Miezi", svg:'<path d="M24 46 L28 10 L54 32Z" fill="#5FD8B0" stroke="#22245A" stroke-width="4" stroke-linejoin="round"/><path d="M96 46 L92 10 L66 32Z" fill="#5FD8B0" stroke="#22245A" stroke-width="4" stroke-linejoin="round"/><path d="M31 36 L33 20 L45 31Z" fill="#FF6B8B"/><path d="M89 36 L87 20 L75 31Z" fill="#FF6B8B"/><circle cx="60" cy="58" r="38" fill="#5FD8B0" stroke="#22245A" stroke-width="4"/><rect x="33" y="42" width="54" height="32" rx="16" fill="#fff" stroke="#22245A" stroke-width="3"/><circle cx="48" cy="56" r="6" fill="#22245A"/><circle cx="72" cy="56" r="6" fill="#22245A"/><circle cx="50" cy="54" r="2" fill="#fff"/><circle cx="74" cy="54" r="2" fill="#fff"/><path d="M56 64 L64 64 L60 68Z" fill="#FF6B8B"/><path d="M14 60 L30 62 M14 70 L30 68 M106 60 L90 62 M106 70 L90 68" stroke="#22245A" stroke-width="2.5" stroke-linecap="round"/><rect x="40" y="94" width="40" height="22" rx="10" fill="#FFC83D" stroke="#22245A" stroke-width="4"/><circle cx="60" cy="105" r="4.5" fill="#FF6B8B"/>'}
+];
+const NAME_IDEAS = ["Bolti","Zippi","Lumi","Robi","Kiki","Funki","Bit","Nova","Sprocki","Tüfti"];
+let ROBO_NAME = "Pixi";
+const cleanName = v => v.replace(/[^A-Za-zÄÖÜäöüß0-9 \-]/g, "").replace(/\s+/g, " ").slice(0, 14);
+
+function swapNames(root){
+  if(ROBO_NAME === "Pixi" || ROBO_NAME.includes("Pixi")) return;
+  if(root.nodeType === 3){ if(root.nodeValue.includes("Pixi")) root.nodeValue = root.nodeValue.split("Pixi").join(ROBO_NAME); return; }
+  if(root.nodeType !== 1 || root.tagName === "SCRIPT" || root.tagName === "STYLE") return;
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode: n => n.parentNode && /^(SCRIPT|STYLE)$/.test(n.parentNode.tagName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT});
+  let n; while((n = w.nextNode())) if(n.nodeValue.includes("Pixi")) n.nodeValue = n.nodeValue.split("Pixi").join(ROBO_NAME);
+  root.querySelectorAll("[aria-label*='Pixi']").forEach(el => el.setAttribute("aria-label", el.getAttribute("aria-label").split("Pixi").join(ROBO_NAME)));
+}
+new MutationObserver(ms => ms.forEach(m => {
+  if(m.type === "characterData") swapNames(m.target);
+  else m.addedNodes.forEach(swapNames);
+})).observe(document.body, {childList:true, subtree:true, characterData:true});
+
+function applyRobot(){
+  const r = S && S.f.robot;
+  const rob = ROBOTS.find(x => r && x.id === r.id) || ROBOTS[0];
+  document.getElementById("pixi").innerHTML = rob.svg;
+  ROBO_NAME = r ? r.n : "Pixi";
+  swapNames(document.body);
+}
+
+function renderSetup(){
+  let team = S.f.team, rid = S.f.robot ? S.f.robot.id : null;
+  const nameIn = $("#robName");
+  nameIn.value = S.f.robot ? S.f.robot.n : "";
+  function check(){ $("#setupDone").disabled = !(team && rid && cleanName(nameIn.value).trim().length >= 2); }
+  function setTeam(t){
+    team = t;
+    $("#teamChoice").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.team === t));
+    $("#teamInfo").hidden = t !== 2;
+    $("#robHead").textContent = t === 2 ? "Sucht euch euren Roboter aus!" : "Such dir deinen Roboter aus!";
+    $("#robLabel").textContent = t === 2 ? "Wie soll euer Roboter heißen?" : "Wie soll dein Roboter heißen?";
+    $("#setupDone").textContent = t === 2 ? "Los geht’s mit unserem Roboter!" : "Los geht’s mit meinem Roboter!";
+    check();
+  }
+  $("#teamChoice").querySelectorAll("button").forEach(b => b.onclick = () => setTeam(+b.dataset.team));
+  const g = $("#robotGrid"); g.innerHTML = "";
+  ROBOTS.forEach(r => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "choice-card";
+    b.setAttribute("aria-pressed", r.id === rid);
+    b.innerHTML = '<svg viewBox="0 0 120 120" aria-hidden="true">' + r.svg + '</svg><b>' + r.label + '</b>';
+    b.onclick = () => {
+      rid = r.id;
+      g.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+      if(!nameIn.value.trim()) nameIn.value = r.label;
+      check();
+    };
+    g.appendChild(b);
+  });
+  const sg = $("#robSugg"); sg.innerHTML = "";
+  NAME_IDEAS.slice().sort(() => Math.random() - .5).slice(0, 5).forEach(n => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "pick"; b.textContent = n;
+    b.onclick = () => { nameIn.value = n; check(); };
+    sg.appendChild(b);
+  });
+  nameIn.oninput = () => { const c = cleanName(nameIn.value); if(c !== nameIn.value) nameIn.value = c; check(); };
+  $("#setupDone").onclick = async () => {
+    S.f.team = team;
+    S.f.robot = {id:rid, n:cleanName(nameIn.value).trim()};
+    applyRobot();
+    await save(true);
+    renderMap();
+  };
+  if(team) setTeam(team);
+  check();
+  show("setup");
+}
+
 $("#brandLink").onclick = e => { e.preventDefault(); if(S) renderMap(); };
 
 /* ================================================================
@@ -685,9 +892,11 @@ function starText(n){ n = n || 0; return "★".repeat(n) + '<span class="off">' 
 
 function renderMap(){
   const f = S.f, done = f.done.length;
-  const hello = done === 0 ? "Hallo <b>" + esc(S.name) + "</b>! Schön, dass du da bist. Starte mit Station 1. Jede Station dauert etwa 15 bis 30 Minuten."
-    : done >= STATIONS.length ? "Wow, <b>" + esc(S.name) + "</b>, du hast alle Stationen geschafft! Du bist jetzt KI-Entdecker*in. Hol dir dein Zeugnis!"
-    : "Willkommen zurück, <b>" + esc(S.name) + "</b>! Du hast schon " + done + " von " + STATIONS.length + " Stationen geschafft. Weiter geht’s!";
+  const two = f.team === 2, who = (two ? "Team " : "") + "<b>" + esc(S.name) + "</b>";
+  const me = "Ich bin <b>" + esc(ROBO_NAME) + "</b> und begleite " + (two ? "euch" : "dich") + ". ";
+  const hello = done === 0 ? "Hallo " + who + "! " + me + (two ? "Schön, dass ihr da seid. Startet" : "Schön, dass du da bist. Starte") + " mit Station 1. Jede Station dauert etwa 15 bis 30 Minuten."
+    : done >= STATIONS.length ? "Wow, " + who + ", " + (two ? "ihr habt alle Stationen geschafft! Ihr seid jetzt KI-Entdecker*innen. Holt euch euer" : "du hast alle Stationen geschafft! Du bist jetzt KI-Entdecker*in. Hol dir dein") + " Zeugnis!"
+    : "Willkommen zurück, " + who + "! " + (two ? "Ihr habt" : "Du hast") + " schon " + done + " von " + STATIONS.length + " Stationen geschafft. Weiter geht’s!";
   $("#mapHello").innerHTML = hello;
   $("#progText").textContent = done + " von " + STATIONS.length + " Stationen geschafft";
   $("#progBar").setAttribute("aria-valuenow", done);
@@ -745,6 +954,10 @@ function renderStep(){
   $("#stDots").innerHTML = st.steps.map((_, k) => '<i class="' + (k < view.i ? "on" : k === view.i ? "now" : "") + '"></i>').join("");
   const body = $("#stepBody"); body.innerHTML = "";
   stepDone = stepAlreadyDone(view.s, view.i) || step.t === "info";
+  if(S.f.team === 2 && step.t !== "info"){
+    const tips = ["👥 Zu zweit: Wechselt euch ab! Jetzt klickt die andere Person.", "👥 Zu zweit: Lest euch die Aufgabe gegenseitig vor.", "👥 Zu zweit: Besprecht zuerst eure Antwort, dann klickt ihr."];
+    const tt = document.createElement("div"); tt.className = "teamtip"; tt.textContent = tips[(view.s + view.i) % 3]; body.appendChild(tt);
+  }
   RENDER[step.t](body, step, complete);
   updateNav();
   window.scrollTo(0, 0);
@@ -1093,19 +1306,20 @@ function badgeSVG(){
 function renderFinish(){
   const f = S.f;
   $("#badgeWrap").innerHTML = badgeSVG();
-  $("#finTitle").textContent = "Herzlichen Glückwunsch, " + S.name + "!";
+  $("#finTitle").textContent = "Herzlichen Glückwunsch" + (S.f.team === 2 ? ", Team " : ", ") + S.name + "!";
   const date = f.finished ? new Date(f.finished + "T12:00:00").toLocaleDateString("de-AT", {day:"numeric", month:"long", year:"numeric"}) : "";
   const total = STATIONS.reduce((a, st) => a + (f.stars[st.id] || 0), 0);
   $("#zeugnis").innerHTML =
     '<div class="seal">' + badgeSVG() + '</div>' +
     '<h2>Zeugnis</h2><p class="sub">KI-Lernreise mit Pixi</p>' +
     '<p style="text-align:center;margin:0">Hiermit wird bestätigt, dass</p>' +
-    '<div class="name">' + esc(S.name) + '</div>' +
-    '<p style="text-align:center">alle 7 Stationen der KI-Lernreise erfolgreich abgeschlossen hat und damit<br><b>KI-Entdecker*in</b> ist.</p>' +
+    '<div class="hand"><span></span>' + (f.team === 2 ? '<span></span>' : '') + '</div>' +
+    '<p class="lern">Lern-Name: ' + esc(S.name) + ', Roboter: ' + esc(ROBO_NAME) + '<br>Echte Namen bitte erst nach dem Ausdrucken mit der Hand eintragen.</p>' +
+    '<p style="text-align:center">' + (f.team === 2 ? 'gemeinsam alle 7 Stationen der KI-Lernreise erfolgreich abgeschlossen haben und damit<br><b>KI-Entdecker*innen</b> sind.' : 'alle 7 Stationen der KI-Lernreise erfolgreich abgeschlossen hat und damit<br><b>KI-Entdecker*in</b> ist.') + '</p>' +
     '<table>' + STATIONS.map((st, k) => '<tr><td>' + st.emoji + ' ' + (k + 1) + '. ' + st.title + '</td><td class="stars">' + starText(f.stars[st.id]) + '</td></tr>').join("") +
     '<tr><td><b>Sterne gesamt</b></td><td><b>' + total + ' von ' + (STATIONS.length * 3) + '</b></td></tr></table>' +
-    '<div class="two"><div><h3>Das kann ich jetzt</h3><ul>' + SKILLS.map(s => '<li>' + s + '</li>').join("") + '</ul></div>' +
-    '<div><h3>Mein KI-Versprechen</h3><ul>' + (f.pledge.length ? f.pledge.map(k => '<li>' + PLEDGES[k] + '</li>').join("") : "<li>–</li>") + '</ul></div></div>' +
+    '<div class="two"><div><h3>' + (f.team === 2 ? 'Das können wir jetzt' : 'Das kann ich jetzt') + '</h3><ul>' + SKILLS.map(s => '<li>' + s + '</li>').join("") + '</ul></div>' +
+    '<div><h3>' + (f.team === 2 ? 'Unser KI-Versprechen' : 'Mein KI-Versprechen') + '</h3><ul>' + (f.pledge.length ? f.pledge.map(k => '<li>' + PLEDGES[k] + '</li>').join("") : "<li>–</li>") + '</ul></div></div>' +
     '<div class="sign"><div>Datum: ' + date + '</div><div>Unterschrift Lehrer*in</div></div>';
   show("finish");
 }
@@ -1117,7 +1331,11 @@ $("#finToMap").onclick = () => renderMap();
 $("#backLink").href = WERKSTATT_LINK;
 $("#testNote").hidden = ONLINE;
 setMode("new");
+newLernName();
 (async () => {
+  let bye = null;
+  try{ bye = sessionStorage.getItem("kikurs_bye"); sessionStorage.removeItem("kikurs_bye"); }catch(e){}
+  if(bye){ setMode("back"); show("login"); loginMsg("Super gemacht! Bis bald. Melde dich nächstes Mal mit „Ich war schon da“, deinem Lern-Namen und deinem Passwort an.", true); return; }
   let ses = null;
   try{ ses = JSON.parse(sessionStorage.getItem("kikurs_session")); }catch(e){}
   if(ses && ses.n && ses.p){
