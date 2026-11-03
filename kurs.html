@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KI-Lernreise mit Pixi – Selbstlernkurs für Kinder</title>
+<meta name="description" content="Ein Selbstlernkurs für Kinder von 8 bis 10 Jahren: In sieben Stationen lernen sie mit dem Roboter Pixi, wie Künstliche Intelligenz funktioniert, und bekommen am Ende ein Abzeichen und ein Zeugnis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+
+<script>
+/* ================================================================
+   EINSTELLUNGEN – hier deine Supabase-Daten eintragen
+   Bleiben die Felder leer, läuft der Kurs im Testmodus und speichert
+   nur auf diesem Gerät.
+   ================================================================ */
+const SUPABASE_URL = "";   // z. B. "https://abcdefgh.supabase.co"
+const SUPABASE_KEY = "";   // der „publishable“ oder „anon“ Key
+const WERKSTATT_LINK = "index.html";  // Link zurück zur KI-Werkstatt
+</script>
+
+<style>
+:root{
+  color-scheme: light;
+  --bg:#EAF4FF; --bg2:#F7FBFF;
+  --ink:#22245A; --soft:#5A5E8C;
+  --sun:#FFC83D; --sun-soft:#FFF2C9;
+  --coral:#FF6B8B; --coral-soft:#FFE3EA;
+  --mint:#1FB389; --mint-soft:#D8F6EB;
+  --lilac:#8C7BFF; --lilac-soft:#ECE8FF;
+  --sky:#3FA9F0; --sky-soft:#DDF0FF;
+  --card:#FFFFFF; --line:#D2DDF0;
+  --right:#1FB389; --wrong:#E2476A;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --bg:#161A3A; --bg2:#1C2148; --ink:#EEF0FF; --soft:#B7BBE3;
+    --sun-soft:#3B3420; --coral-soft:#46253B; --mint-soft:#183E3A; --lilac-soft:#2E2A5E; --sky-soft:#1C3554;
+    --card:#232859; --line:#3A4080;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#161A3A; --bg2:#1C2148; --ink:#EEF0FF; --soft:#B7BBE3;
+  --sun-soft:#3B3420; --coral-soft:#46253B; --mint-soft:#183E3A; --lilac-soft:#2E2A5E; --sky-soft:#1C3554;
+  --card:#232859; --line:#3A4080;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 80px)}
+body{
+  margin:0; min-height:100vh;
+  font-family:"Atkinson Hyperlegible", Verdana, "Segoe UI", sans-serif;
+  font-size:1.15rem; line-height:1.6; color:var(--ink);
+  background:
+    radial-gradient(circle at 8% 12%, var(--sun-soft) 0 120px, transparent 121px),
+    radial-gradient(circle at 92% 30%, var(--lilac-soft) 0 160px, transparent 161px),
+    radial-gradient(circle at 15% 88%, var(--mint-soft) 0 140px, transparent 141px),
+    var(--bg);
+  background-attachment:fixed;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--card)}
+h1,h2,h3{font-family:"Baloo 2", "Comic Sans MS", "Trebuchet MS", sans-serif;line-height:1.15;margin:0 0 .4em}
+h1{font-size:clamp(2.1rem,6vw,3.2rem);font-weight:800}
+h2{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800}
+h3{font-size:1.4rem;font-weight:700}
+p{margin:0 0 .9em}
+a{color:var(--ink)}
+[hidden]{display:none!important}
+:focus-visible{outline:4px solid var(--sun);outline-offset:3px;border-radius:8px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+.wrap{max-width:900px;margin:0 auto;padding:0 18px}
+
+/* Kopfzeile */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--card);border-bottom:3px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;min-height:64px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:8px;font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.25rem;text-decoration:none;color:var(--ink);margin-right:auto}
+.brand svg{width:40px;height:40px}
+.status{font-size:.9rem;color:var(--soft);white-space:nowrap}
+.status.err{color:var(--wrong);font-weight:700}
+
+/* Knöpfe */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font:inherit;font-weight:700;font-size:1.1rem;
+  padding:12px 22px;border-radius:16px;border:3px solid var(--ink);
+  background:var(--card);color:var(--ink);cursor:pointer;text-decoration:none;
+  box-shadow:0 5px 0 var(--ink);transition:transform .08s, box-shadow .08s;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+.btn.go{background:var(--sun);color:#22245A}
+.btn.small{font-size:.95rem;padding:7px 14px;border-radius:12px;box-shadow:0 3px 0 var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:0 5px 0 var(--ink);transform:none}
+
+/* Pixi */
+.pixi-row{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px}
+.pixi-row svg.pixi{width:96px;height:96px;flex:none}
+.bubble{position:relative;background:var(--card);border:3px solid var(--ink);border-radius:20px;padding:16px 20px;flex:1}
+.bubble::before{content:"";position:absolute;left:-14px;top:26px;border:12px solid transparent;border-right-color:var(--ink);border-left:0}
+.bubble::after{content:"";position:absolute;left:-9px;top:28px;border:10px solid transparent;border-right-color:var(--card);border-left:0}
+.bubble p:last-child{margin-bottom:0}
+
+.card{background:var(--card);border:3px solid var(--ink);border-radius:24px;padding:24px}
+
+/* Login */
+.login{padding:40px 0 60px}
+.login-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}
+.login .lead{font-size:1.2rem;color:var(--soft)}
+.tabs{display:flex;gap:8px;margin-bottom:18px}
+.tab{flex:1;font:inherit;font-weight:700;padding:10px;border-radius:14px;border:3px solid var(--line);background:var(--bg2);color:var(--ink);cursor:pointer}
+.tab[aria-selected="true"]{border-color:var(--ink);background:var(--sun);color:#22245A}
+label{display:block;font-weight:700;margin:12px 0 6px}
+input[type=text],input[type=password]{width:100%;font:inherit;font-size:1.2rem;padding:12px 14px;border-radius:14px;border:3px solid var(--line);background:var(--bg2);color:var(--ink)}
+input:focus{border-color:var(--ink);outline:none}
+.pwrow{display:flex;gap:8px}
+.pwrow input{flex:1}
+.hint{font-size:.95rem;color:var(--soft);margin-top:6px}
+.msg{margin-top:14px;padding:10px 14px;border-radius:12px;background:var(--coral-soft);font-weight:700}
+.msg.ok{background:var(--mint-soft)}
+.testmode{margin-top:16px;padding:10px 14px;border-radius:12px;background:var(--sun-soft);font-size:.92rem}
+
+/* Karte */
+.map{padding:32px 0 60px}
+.progress{height:20px;border-radius:999px;background:var(--card);border:3px solid var(--ink);overflow:hidden;margin:6px 0 4px}
+.progress span{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--mint) 0 14px,#3CCB9F 14px 28px);transition:width .5s}
+.trail{list-style:none;margin:28px 0 0;padding:0;position:relative}
+.trail::before{content:"";position:absolute;left:43px;top:30px;bottom:30px;border-left:5px dashed var(--line)}
+.stop{position:relative;display:flex;gap:18px;align-items:center;margin-bottom:18px}
+.stop .dot{width:90px;height:90px;border-radius:50%;border:4px solid var(--ink);display:grid;place-items:center;font-size:2.4rem;flex:none;background:var(--card);position:relative;z-index:1}
+.stop .info{flex:1;background:var(--card);border:3px solid var(--line);border-radius:20px;padding:14px 18px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.stop .info h3{margin:0;font-size:1.25rem}
+.stop .meta{font-size:.95rem;color:var(--soft)}
+.stop.locked .dot{filter:grayscale(1);opacity:.5}
+.stop.locked .info{opacity:.65}
+.stop.current .info{border-color:var(--ink);box-shadow:0 5px 0 var(--ink)}
+.stop.current .dot{animation:bob 2.4s ease-in-out infinite}
+.stop .check{position:absolute;left:62px;top:-4px;z-index:2;background:var(--mint);color:#fff;border:3px solid var(--ink);border-radius:50%;width:34px;height:34px;display:grid;place-items:center;font-size:1rem;font-weight:700}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.stars{color:var(--sun);letter-spacing:2px;font-size:1.1rem;white-space:nowrap}
+.stars .off{color:var(--line)}
+
+/* Station */
+.station{padding:24px 0 60px}
+.st-head{display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap}
+.st-head .emo{width:62px;height:62px;border-radius:50%;border:3px solid var(--ink);display:grid;place-items:center;font-size:1.9rem;flex:none}
+.st-head h2{margin:0;flex:1;min-width:200px}
+.dots{display:flex;gap:6px;margin:4px 0 18px;flex-wrap:wrap}
+.dots i{width:28px;height:10px;border-radius:999px;background:var(--line)}
+.dots i.on{background:var(--ink)}
+.dots i.now{background:var(--sun);outline:2px solid var(--ink)}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:22px;flex-wrap:wrap}
+.nav .need{font-size:.95rem;color:var(--soft);align-self:center;flex:1;text-align:center;min-width:180px}
+.task{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:1.35rem;margin-bottom:12px}
+
+/* Auswahl & Quiz */
+.opts{display:grid;gap:10px}
+.opt{font:inherit;text-align:left;padding:12px 16px;border-radius:14px;border:3px solid var(--line);background:var(--bg2);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt.right{background:var(--mint-soft);border-color:var(--right);font-weight:700}
+.opt.wrong{background:var(--coral-soft);border-color:var(--wrong);text-decoration:line-through}
+.opt:disabled{cursor:default}
+.fb{margin-top:12px;padding:12px 16px;border-radius:14px;background:var(--sky-soft)}
+.fb.good{background:var(--mint-soft)}
+.fb.bad{background:var(--coral-soft)}
+.qcount{font-size:.95rem;color:var(--soft);margin-bottom:4px}
+.result{text-align:center;padding:10px}
+.result .big{font-size:2.6rem}
+
+/* Sortieren */
+.sort-list{display:grid;gap:12px}
+.sitem{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:12px 14px;border-radius:16px;border:3px solid var(--line);background:var(--bg2)}
+.sitem .e{font-size:2.2rem;line-height:1}
+.sitem .n{flex:1;min-width:150px;font-weight:700}
+.sitem .bins{display:flex;gap:8px;flex-wrap:wrap}
+.sitem.ok{border-color:var(--right);background:var(--mint-soft)}
+.sitem .why{flex-basis:100%;font-size:.97rem;margin:0}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* Monster */
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.mgrid.four{grid-template-columns:repeat(4,1fr)}
+@media (max-width:600px){.mgrid,.mgrid.four{grid-template-columns:repeat(2,1fr)}}
+.mon{border:3px solid var(--line);border-radius:18px;padding:8px;text-align:center;background:var(--bg2)}
+.mon svg{width:90px;height:90px;display:block;margin:0 auto}
+.mon .row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.mon .lbl{font-weight:700;margin:4px 0}
+.pick{font:inherit;font-size:.95rem;padding:5px 10px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.pick[aria-pressed="true"]{border-color:var(--ink);background:var(--sun);color:#22245A;font-weight:700}
+.machine-anim{display:flex;align-items:center;gap:12px;justify-content:center;padding:16px;font-weight:700}
+.gear{display:inline-block;font-size:2rem;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Wortspiel */
+.sentence{font-size:1.5rem;font-family:"Baloo 2",sans-serif;font-weight:700;margin:10px 0 14px}
+.sentence .gap{display:inline-block;min-width:110px;border-bottom:4px dashed var(--ink);text-align:center;color:var(--coral)}
+.bar{display:flex;align-items:center;gap:10px;margin:6px 0}
+.bar .w{width:110px;font-weight:700}
+.bar .track{flex:1;height:22px;border-radius:999px;background:var(--bg2);border:2px solid var(--line);overflow:hidden}
+.bar .fill{height:100%;background:var(--sky);width:0;transition:width .8s}
+.bar .pct{width:48px;text-align:right;font-variant-numeric:tabular-nums}
+
+/* Externe Aufgabe */
+.ext-box{border:3px dashed var(--ink);border-radius:18px;padding:16px 18px;background:var(--lilac-soft);margin-bottom:16px}
+.todo{list-style:none;padding:0;margin:12px 0}
+.todo li{margin-bottom:8px}
+.todo label{display:flex;gap:10px;align-items:flex-start;font-weight:400;margin:0;cursor:pointer}
+.todo input{width:24px;height:24px;margin-top:3px;accent-color:var(--mint);flex:none}
+
+/* Versprechen */
+.pledge{display:grid;gap:10px}
+.pledge button{font:inherit;text-align:left;padding:12px 16px;border-radius:14px;border:3px solid var(--line);background:var(--bg2);color:var(--ink);cursor:pointer;display:flex;gap:10px;align-items:center}
+.pledge button[aria-pressed="true"]{border-color:var(--ink);background:var(--sun-soft);font-weight:700}
+.pledge .box{width:26px;height:26px;border-radius:8px;border:3px solid var(--ink);display:grid;place-items:center;flex:none;font-size:.95rem}
+
+/* Feier */
+.overlay{position:fixed;inset:0;background:rgba(22,26,58,.6);display:grid;place-items:center;z-index:50;padding:20px}
+.overlay .card{max-width:420px;text-align:center;animation:pop .4s}
+.overlay .sticker{font-size:5rem;line-height:1;display:block;margin-bottom:8px}
+@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:49;overflow:hidden}
+.confetti i{position:absolute;top:-20px;width:10px;height:16px;border-radius:3px;animation:fall 2.4s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+
+/* Abschluss & Zeugnis */
+.finish{padding:32px 0 60px}
+.badge-wrap{text-align:center;margin-bottom:24px}
+.badge-wrap svg{width:200px;height:240px}
+.zeugnis{background:#fff;color:#22245A;border:6px double #22245A;border-radius:12px;padding:36px 40px;position:relative;max-width:780px;margin:0 auto}
+.zeugnis h2{text-align:center;font-size:2.4rem;margin-bottom:0}
+.zeugnis .sub{text-align:center;color:#5A5E8C;margin-bottom:22px}
+.zeugnis .name{text-align:center;font-family:"Baloo 2",sans-serif;font-size:2.2rem;font-weight:800;border-bottom:3px solid #22245A;margin:8px auto 18px;max-width:420px}
+.zeugnis table{width:100%;border-collapse:collapse;margin:12px 0 20px}
+.zeugnis td{padding:7px 4px;border-bottom:1px solid #D2DDF0}
+.zeugnis td:last-child{text-align:right}
+.zeugnis .two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.zeugnis ul{margin:0;padding-left:1.2em}
+.zeugnis .sign{display:flex;justify-content:space-between;gap:24px;margin-top:34px}
+.zeugnis .sign div{flex:1;border-top:2px solid #22245A;padding-top:4px;font-size:.95rem;color:#5A5E8C}
+.zeugnis .seal{position:absolute;right:26px;top:22px;width:86px;height:104px}
+.zeugnis .stars .off{color:#D2DDF0}
+.zeugnis .stars{color:#F2B300}
+
+@media (max-width:760px){
+  .login-grid,.zeugnis .two{grid-template-columns:1fr}
+  .stop .dot{width:70px;height:70px;font-size:1.9rem}
+  .trail::before{left:33px}
+  .stop .check{left:46px}
+  .zeugnis{padding:26px 18px}
+  .zeugnis .seal{display:none}
+  .pixi-row svg.pixi{width:70px;height:70px}
+}
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff}
+  body > *:not(main), .top, .no-print, .badge-wrap{display:none!important}
+  main > section:not(#finish){display:none!important}
+  .finish{padding:0}
+  .zeugnis{border-width:6px;max-width:none}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="pixi" viewBox="0 0 120 120">
+    <line x1="60" y1="10" x2="60" y2="26" stroke="#22245A" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="60" cy="9" r="7" fill="#FF6B8B" stroke="#22245A" stroke-width="3"/>
+    <rect x="10" y="44" width="12" height="24" rx="6" fill="#3FA9F0" stroke="#22245A" stroke-width="3"/>
+    <rect x="98" y="44" width="12" height="24" rx="6" fill="#3FA9F0" stroke="#22245A" stroke-width="3"/>
+    <rect x="20" y="26" width="80" height="62" rx="26" fill="#6EC6FF" stroke="#22245A" stroke-width="4"/>
+    <rect x="32" y="40" width="56" height="34" rx="16" fill="#fff" stroke="#22245A" stroke-width="3"/>
+    <circle cx="48" cy="55" r="6.5" fill="#22245A"/><circle cx="72" cy="55" r="6.5" fill="#22245A"/>
+    <circle cx="50" cy="53" r="2.2" fill="#fff"/><circle cx="74" cy="53" r="2.2" fill="#fff"/>
+    <path d="M52 65 Q60 71 68 65" stroke="#22245A" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="38" cy="66" r="3.5" fill="#FF6B8B" opacity=".7"/><circle cx="82" cy="66" r="3.5" fill="#FF6B8B" opacity=".7"/>
+    <rect x="38" y="88" width="44" height="26" rx="10" fill="#FFC83D" stroke="#22245A" stroke-width="4"/>
+    <circle cx="60" cy="101" r="5" fill="#FF6B8B" stroke="#22245A" stroke-width="2"/>
+  </symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#" id="brandLink"><svg aria-hidden="true"><use href="#pixi"/></svg>KI-Lernreise</a>
+    <span class="status" id="status" aria-live="polite"></span>
+    <button class="btn small" id="pauseBtn" type="button" hidden>⏸️ Pause machen</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ANMELDEN -->
+<section id="login" class="login">
+  <div class="wrap login-grid">
+    <div>
+      <h1>Wie denkt eigentlich ein Computer?</h1>
+      <p class="lead">Geh mit Pixi auf die KI-Lernreise! In 7 Stationen findest du heraus, wie Künstliche Intelligenz lernt, probierst echte KI aus und bekommst am Ende ein Abzeichen und ein Zeugnis.</p>
+      <div class="pixi-row">
+        <svg class="pixi" aria-hidden="true"><use href="#pixi"/></svg>
+        <div class="bubble"><p>Du kannst jederzeit Pause machen. Wenn du wiederkommst, geht es genau dort weiter, wo du aufgehört hast.</p></div>
+      </div>
+      <p style="font-size:.95rem;color:var(--soft)">Dauer: etwa 2 bis 3 Stunden, aufgeteilt auf mehrere Tage. <a href="#" id="backLink">Zurück zur KI-Werkstatt</a></p>
+    </div>
+
+    <div class="card">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="tabNew" aria-selected="true" type="button">Ich bin neu</button>
+        <button class="tab" role="tab" id="tabBack" aria-selected="false" type="button">Ich war schon da</button>
+      </div>
+      <form id="loginForm" autocomplete="off">
+        <label for="fName">Dein Spitzname</label>
+        <input type="text" id="fName" maxlength="30" required>
+        <p class="hint" id="nameHint">Nimm einen Spitznamen, nicht deinen ganzen echten Namen. Zum Beispiel „Sternfuchs7“.</p>
+
+        <label for="fPw">Dein Passwort</label>
+        <div class="pwrow">
+          <input type="password" id="fPw" maxlength="60" required>
+          <button class="btn small" type="button" id="eye" aria-label="Passwort zeigen">👁️</button>
+        </div>
+        <div id="pw2Wrap">
+          <label for="fPw2">Passwort noch einmal</label>
+          <input type="password" id="fPw2" maxlength="60">
+          <p class="hint">Mindestens 4 Zeichen. Schreib Spitzname und Passwort in dein Heft, damit du sie nicht vergisst!</p>
+        </div>
+        <div style="margin-top:18px"><button class="btn go" type="submit" id="loginBtn">Los geht’s!</button></div>
+        <div class="msg" id="loginMsg" hidden></div>
+      </form>
+      <div class="testmode" id="testNote" hidden><b>Testmodus:</b> Supabase ist noch nicht eingetragen. Der Fortschritt wird nur in diesem Browser gespeichert.</div>
+    </div>
+  </div>
+</section>
+
+<!-- KARTE -->
+<section id="map" class="map" hidden>
+  <div class="wrap">
+    <div class="pixi-row">
+      <svg class="pixi" aria-hidden="true"><use href="#pixi"/></svg>
+      <div class="bubble"><p id="mapHello"></p></div>
+    </div>
+    <p style="margin:0;font-weight:700" id="progText"></p>
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="7" id="progBar"><span></span></div>
+    <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap" id="mapActions"></div>
+    <ol class="trail" id="trail"></ol>
+  </div>
+</section>
+
+<!-- STATION -->
+<section id="station" class="station" hidden>
+  <div class="wrap">
+    <div style="margin-bottom:14px"><button class="btn small" type="button" id="toMap">🗺️ Zur Karte</button></div>
+    <div class="st-head"><div class="emo" id="stEmo"></div><h2 id="stTitle"></h2></div>
+    <div class="dots" id="stDots" aria-hidden="true"></div>
+    <div class="card" id="stepBody"></div>
+    <div class="nav">
+      <button class="btn" type="button" id="prevBtn">⬅ Zurück</button>
+      <span class="need" id="needText"></span>
+      <button class="btn go" type="button" id="nextBtn">Weiter ➡</button>
+    </div>
+  </div>
+</section>
+
+<!-- ABSCHLUSS -->
+<section id="finish" class="finish" hidden>
+  <div class="wrap">
+    <div class="badge-wrap" id="badgeWrap"></div>
+    <div class="no-print" style="text-align:center;margin-bottom:24px">
+      <h2 id="finTitle"></h2>
+      <p>Hier ist dein Zeugnis. Du kannst es ausdrucken oder als PDF speichern.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button class="btn go" type="button" onclick="window.print()">🖨️ Zeugnis drucken</button>
+        <button class="btn" type="button" id="finToMap">🗺️ Zur Karte</button>
+      </div>
+    </div>
+    <div class="zeugnis" id="zeugnis"></div>
+  </div>
+</section>
+
+</main>
+
+<div id="overlayRoot"></div>
+
+<script>
+/* ================================================================
+   KURSINHALT
+   ================================================================ */
+const STATIONS = [
+{ id:"s1", title:"Was ist KI?", emoji:"🤖", color:"var(--sun)", min:15, steps:[
+  {t:"info", text:"Hallo, ich bin <b>Pixi</b>! Ich bin ein kleiner Roboter und begleite dich auf deiner Lernreise. Gemeinsam finden wir heraus, wie <b>Künstliche Intelligenz</b> funktioniert. Man sagt dazu kurz <b>KI</b>."},
+  {t:"info", text:"KI ist ein Computerprogramm, das aus <b>ganz vielen Beispielen</b> gelernt hat. Danach kann es Dinge erkennen oder raten: ein Gesicht auf einem Foto, ein Wort, das du sprichst, oder welches Video dir gefallen könnte.</p><p>Ein normales Programm ist anders. Es macht immer genau dasselbe, wie ein Kochrezept. Ein Taschenrechner rechnet 2 + 2 immer gleich aus. Er muss dafür nichts lernen."},
+  {t:"sort", task:"Lernt das Ding aus Beispielen, oder folgt es nur festen Regeln?", bins:["🧠 Lernt aus Beispielen","📏 Feste Regeln"], items:[
+    {e:"🗣️", n:"Sprachassistent, der deine Stimme versteht", b:0, why:"Er hat Tausende Stimmen gehört und daraus gelernt, wie Wörter klingen."},
+    {e:"🧮", n:"Taschenrechner", b:1, why:"Er rechnet nach festen Regeln. 2 + 2 ist immer 4."},
+    {e:"📱", n:"Handy, das sich mit deinem Gesicht entsperrt", b:0, why:"Es hat gelernt, wie Gesichter aussehen, und erkennt deines wieder."},
+    {e:"🚦", n:"Ampel", b:1, why:"Sie schaltet nach einem festen Plan um."},
+    {e:"📺", n:"Video-App, die dir Videos vorschlägt", b:0, why:"Sie lernt aus dem, was du und viele andere angeschaut haben."},
+    {e:"💡", n:"Lichtschalter", b:1, why:"Ein – aus. Mehr kann er nicht, und lernen muss er auch nichts."},
+    {e:"🌍", n:"App, die Sprachen übersetzt", b:0, why:"Sie hat Millionen Sätze in verschiedenen Sprachen gelesen."},
+    {e:"⏰", n:"Wecker", b:1, why:"Er klingelt zur eingestellten Zeit. Das ist eine feste Regel."}
+  ]},
+  {t:"quiz", qs:[
+    {q:"Was macht eine KI besonders?", o:["Sie lernt aus vielen Beispielen","Sie hat ein echtes Gehirn","Sie weiß einfach alles"], a:0, why:"Eine KI lernt aus Beispielen. Ein Gehirn hat sie nicht, und alles weiß sie auch nicht."},
+    {q:"Welches dieser Dinge nutzt KI?", o:["Ein Lichtschalter","Ein Sprachassistent, der dich versteht","Eine Uhr an der Wand"], a:1, why:"Der Sprachassistent hat aus vielen Stimmen gelernt."},
+    {q:"Hat eine KI Gefühle?", o:["Ja, sie ist traurig, wenn man sie ausschaltet","Nein. Sie kann nur so schreiben, als hätte sie welche","Nur am Wochenende"], a:1, why:"Eine KI fühlt nichts. Sie hat nur gelernt, wie Menschen über Gefühle schreiben."}
+  ]}
+]},
+{ id:"s2", title:"Lernen aus Beispielen", emoji:"🧩", color:"var(--coral)", min:25, steps:[
+  {t:"info", text:"Wie lernt eine KI? Stell dir vor, du zeigst einem kleinen Kind, was ein Hund ist. Du zeigst ihm viele Hunde: große, kleine, braune und gefleckte. Irgendwann sieht es einen neuen Hund und ruft: „Wauwau!“</p><p>Eine KI lernt genauso, in drei Schritten:<br><b>1.</b> Beispiele ansehen <b>2.</b> Muster finden <b>3.</b> Bei etwas Neuem raten"},
+  {t:"monster"},
+  {t:"ext", title:"Quick, Draw! – Kann die KI deine Zeichnung erraten?", url:"https://quickdraw.withgoogle.com/", intro:"Jetzt zeichnest du, und eine echte KI rät, was es ist. Sie hat dafür Millionen Zeichnungen von anderen Menschen angeschaut.",
+    todo:["Öffne die Seite und starte das Spiel.","Zeichne die 6 Dinge, die dir angesagt werden. Du hast jeweils 20 Sekunden.","Hör zu, was die KI beim Zeichnen vermutet.","Klick am Ende auf eine Zeichnung, die nicht erkannt wurde. Dort siehst du, wie andere Menschen dasselbe gezeichnet haben."],
+    check:{q:"Warum erkennt die KI manche Zeichnungen nicht?", o:["Weil sie müde ist","Weil die meisten Menschen es anders gezeichnet haben als ich","Weil sie nicht zeichnen mag"], a:1, why:"Genau! Die KI vergleicht mit ihren Beispielen. Wenn deine Zeichnung ganz anders aussieht, erkennt sie sie nicht."}},
+  {t:"quiz", qs:[
+    {q:"Was braucht eine KI zum Lernen?", o:["Viele Beispiele","Süßigkeiten","Viel Schlaf"], a:0, why:"Ohne Beispiele kann eine KI nichts lernen."},
+    {q:"Eine KI soll Hunde erkennen. Was zeigst du ihr?", o:["Ein einziges Hundebild","Viele verschiedene Hundebilder","Bilder von Katzen"], a:1, why:"Je mehr verschiedene Hunde sie sieht, desto besser erkennt sie neue."},
+    {q:"Die KI hat falsch geraten. Was ist der Grund?", o:["Ihre Beispiele haben nicht gereicht oder nicht gepasst","Sie hatte keine Lust","Sie wollte dich ärgern"], a:0, why:"Eine KI ärgert niemanden. Sie hat einfach nicht die richtigen Beispiele gehabt."}
+  ]}
+]},
+{ id:"s3", title:"Gute und schlechte Beispiele", emoji:"🍎", color:"var(--mint)", min:25, steps:[
+  {t:"info", text:"Eine KI kann nur lernen, was in ihren Beispielen steckt. Wenn Beispiele fehlen oder alle gleich aussehen, macht sie Fehler.</p><p>Das passiert auch bei echten, großen KIs. Darum ist es wichtig, dass die Beispiele von <b>ganz verschiedenen Dingen und Menschen</b> kommen. Sonst ist eine KI nicht fair."},
+  {t:"bias"},
+  {t:"ext", title:"AI for Oceans – Hilf der KI, das Meer sauber zu machen", url:"https://code.org/oceans", intro:"Hier bringst du einer KI bei, Fische von Müll zu unterscheiden. Die Seite kann man oben auf Deutsch umstellen.",
+    todo:["Öffne die Seite und schau dir das erste Video an.","Zeig der KI: Fisch oder kein Fisch? Klick dafür viele Beispiele an.","Schau zu, wie gut die KI danach sortiert.","Spiel weiter, bis du der KI Wörter wie „lustig“ oder „gefährlich“ beibringst."],
+    check:{q:"Die KI sucht „lustige“ Fische. Wer hat entschieden, welcher Fisch lustig ist?", o:["Die Fische selbst","Ich, mit meinen Beispielen","Das Meer"], a:1, why:"Richtig! Die KI hat deine Meinung gelernt. Ein anderes Kind hätte ihr vielleicht etwas ganz anderes beigebracht."}},
+  {t:"quiz", qs:[
+    {q:"Pixi hat nur rote Äpfel gesehen. Was passiert bei einem grünen Apfel?", o:["Pixi erkennt ihn sofort","Pixi erkennt ihn vielleicht nicht","Pixi wird grün"], a:1, why:"Was Pixi nie gesehen hat, kann Pixi schlecht erkennen."},
+    {q:"Wie wird eine KI fairer?", o:["Mit Beispielen von vielen verschiedenen Dingen und Menschen","Mit weniger Beispielen","Mit lauter gleichen Beispielen"], a:0, why:"Vielfältige Beispiele helfen der KI, für alle gut zu funktionieren."},
+    {q:"Wer sucht die Beispiele für eine KI aus?", o:["Die KI ganz allein","Menschen","Niemand"], a:1, why:"Menschen wählen die Beispiele aus. Darum tragen sie auch Verantwortung."}
+  ]}
+]},
+{ id:"s4", title:"Deine eigene KI", emoji:"🛠️", color:"var(--lilac)", min:30, steps:[
+  {t:"info", text:"Jetzt wird es echt: <b>Du trainierst selbst eine KI!</b> Sie soll lernen, ob ein Satz <b>nett</b> oder <b>gemein</b> ist. Dafür gibst du ihr Beispielsätze.</p><p>Tipp: Mach das am besten mit einem Erwachsenen oder einem anderen Kind gemeinsam."},
+  {t:"ext", title:"LearningML – Trainiere eine Text-KI", url:"https://learningml.org/lml-editor/", intro:"Die Seite ist vielleicht nicht auf Deutsch. Wenn du etwas nicht verstehst, frag einen Erwachsenen.",
+    alt:{label:"Du hast eine Kamera und willst lieber Bilder nehmen? Dann probier Teachable Machine.", url:"https://teachablemachine.withgoogle.com/"},
+    todo:["Starte ein neues Projekt, das Texte erkennen soll.","Lege zwei Gruppen an: „nett“ und „gemein“.","Schreib in jede Gruppe mindestens 5 Sätze. Zum Beispiel „Du bist toll“ oder „Geh weg, du nervst“.","Lass die KI lernen. Das dauert einen kleinen Moment.","Teste die KI mit 3 neuen Sätzen, die du dir selbst ausdenkst."],
+    check:{q:"Deine KI erkennt einen Satz falsch. Was machst du?", o:["Ich gebe mehr und andere Beispiele dazu und lasse sie neu lernen","Ich gebe auf","Ich schimpfe mit dem Computer"], a:0, why:"Super! Genau so machen es auch die Menschen, die echte KIs bauen."}},
+  {t:"quiz", qs:[
+    {q:"Was macht die KI beim Lernen?", o:["Sie sucht Muster in den Beispielen","Sie liest ein Buch","Sie fragt ihre Freunde"], a:0, why:"Sie sucht, was die Beispiele einer Gruppe gemeinsam haben."},
+    {q:"Ist eine KI nach dem Lernen immer richtig?", o:["Ja, immer","Nein, sie rät und kann sich irren"], a:1, why:"Eine KI rät immer nur, was am wahrscheinlichsten ist."},
+    {q:"Der Satz „Du bist voll krass!“ – warum ist der für eine KI schwierig?", o:["Er kann nett oder gemein gemeint sein","Er ist zu kurz","Er hat ein Rufzeichen"], a:0, why:"Auch Menschen verstehen so einen Satz manchmal falsch. Es kommt darauf an, wie er gemeint ist."}
+  ]}
+]},
+{ id:"s5", title:"Wie Chatbots schreiben", emoji:"💬", color:"var(--sky)", min:25, steps:[
+  {t:"info", text:"Hast du schon gesehen, wie ein Handy beim Tippen Wörter vorschlägt? Ein <b>Chatbot</b> macht etwas Ähnliches, nur viel größer. Er hat riesige Mengen an Texten gelesen und rät dann <b>Wort für Wort</b>, was am besten passt.</p><p>Spiel jetzt selbst Chatbot: Welches Wort würde Pixi wählen?"},
+  {t:"words"},
+  {t:"ext", title:"Pixi-Check im Klexikon", url:"https://klexikon.zum.de/", intro:"Pixi hat in einem Chat geschrieben: <b>„Spinnen haben 6 Beine.“</b> Das klingt sehr sicher. Aber stimmt es? Prüf es im Kinderlexikon nach!",
+    todo:["Öffne das Klexikon.","Gib oben in die Suche „Spinnen“ ein.","Lies nach, wie viele Beine eine Spinne hat."],
+    check:{q:"Wie viele Beine hat eine Spinne?", o:["6 Beine","8 Beine","10 Beine"], a:1, why:"Richtig, 8 Beine! Pixi hat sich geirrt und dabei trotzdem ganz sicher geklungen. Darum prüfen wir nach."}},
+  {t:"quiz", qs:[
+    {q:"Wie schreibt ein Chatbot?", o:["Er rät Wort für Wort, was gut passt","Er schreibt aus einem Lexikon ab","Ein kleiner Mensch tippt im Computer"], a:0, why:"Er rechnet aus, welches Wort am wahrscheinlichsten als Nächstes kommt."},
+    {q:"Ein Chatbot klingt ganz sicher. Stimmt dann, was er sagt?", o:["Ja, immer","Nein, er kann sich auch ganz sicher irren"], a:1, why:"Chatbots klingen fast immer sicher, auch wenn sie etwas erfinden."},
+    {q:"Was machst du mit einer wichtigen Antwort vom Chatbot?", o:["Ich glaube sie sofort","Ich prüfe sie in einem Buch oder Lexikon nach","Ich schicke sie allen"], a:1, why:"Nachprüfen ist schlau!"}
+  ]}
+]},
+{ id:"s6", title:"Echt oder erfunden?", emoji:"🔎", color:"var(--coral)", min:20, steps:[
+  {t:"info", text:"Mit KI kann man Bilder, Stimmen und Videos machen, die <b>echt aussehen, aber erfunden sind</b>. Manche Leute nutzen das, um andere zu täuschen. Das nennt man <b>Fake News</b>.</p><p>Werde Detektiv*in! Stell dir diese 5 Fragen:<br>🛑 <b>Stopp!</b> Macht mich das sehr wütend oder ängstlich?<br>👤 <b>Wer</b> hat das gemacht?<br>📰 <b>Wo</b> steht das noch?<br>🤔 <b>Kann das</b> überhaupt sein?<br>🙋 <b>Wen</b> kann ich fragen?"},
+  {t:"quiz", stars:false, label:"Was tust du?", qs:[
+    {q:"Im Klassenchat steht: „Ab morgen ist die Schule für immer geschlossen! Schick das an alle!“", o:["Sofort an alle weiterschicken","Erst bei Lehrer*in oder Eltern nachfragen"], a:1, why:"Nachrichten, die man „an alle“ schicken soll, sind oft erfunden."},
+    {q:"Du siehst ein Foto: Ein Hai schwimmt mitten durch eine Straße in Wien.", o:["Das ist sicher echt, ich sehe es ja","Kann das sein? Ich schaue, ob echte Nachrichten davon berichten"], a:1, why:"Solche Bilder kann man mit KI leicht machen. Echte Nachrichten würden darüber berichten."},
+    {q:"Ein Video zeigt einen berühmten Fußballer. Er sagt: „Gemüse macht dumm!“", o:["Stimmt, er hat es ja gesagt","Das könnte ein Deepfake sein, also ein gefälschtes Video"], a:1, why:"Mit KI kann man Gesichter und Stimmen nachmachen. So ein Video heißt Deepfake."},
+    {q:"Ein Fenster blinkt: „Klick hier und bekomme 1000 Gratis-Münzen für dein Spiel!“", o:["Schnell klicken!","Nicht klicken, das ist ein Trick"], a:1, why:"Solche Angebote sind fast immer Tricks, um an deine Daten zu kommen."}
+  ]},
+  {t:"quiz", qs:[
+    {q:"Eine Nachricht macht dich sehr wütend oder ängstlich. Was tust du zuerst?", o:["Sofort weiterschicken","Stopp! Erst nachdenken und nachprüfen"], a:1, why:"Starke Gefühle sind ein Zeichen, besonders genau hinzuschauen."},
+    {q:"Was ist ein Deepfake?", o:["Ein tiefer See","Ein mit KI gemachtes Video oder Bild, das echt aussieht","Ein Unterwasserspiel"], a:1, why:"Deepfakes sehen echt aus, sind aber erfunden."},
+    {q:"Woran erkennst du am besten, ob ein Bild echt ist?", o:["Daran, woher es kommt und wer es gemacht hat","An den Farben","Daran, wie viele Likes es hat"], a:0, why:"Die Quelle ist am wichtigsten. KI-Bilder werden nämlich immer besser."}
+  ]}
+]},
+{ id:"s7", title:"KI-Profi werden", emoji:"🤝", color:"var(--mint)", min:20, steps:[
+  {t:"info", text:"Fast geschafft! Zum Schluss geht es darum, wie man <b>klug und freundlich</b> mit KI umgeht. Auch im Internet und mit KI gilt: Wir sind fair zueinander und passen auf uns auf."},
+  {t:"sort", task:"Darf ich das einer KI erzählen?", bins:["👍 Ist okay","✋ Lieber nicht"], items:[
+    {e:"🐶", n:"Mein Lieblingstier", b:0, why:"Das ist kein Geheimnis. Das darfst du gern erzählen."},
+    {e:"🏠", n:"Meine Adresse", b:1, why:"Wo du wohnst, gehört nicht ins Internet."},
+    {e:"🔑", n:"Mein Passwort", b:1, why:"Passwörter sind geheim, auch vor einer KI."},
+    {e:"🦕", n:"Eine Frage zu Dinosauriern", b:0, why:"Super Frage! Prüf die Antwort aber nach."},
+    {e:"📸", n:"Ein Foto von meiner Freundin", b:1, why:"Fotos von anderen gehören ihnen. Du brauchst ihre Erlaubnis."},
+    {e:"😂", n:"Ein Witz", b:0, why:"Witze sind okay!"},
+    {e:"📞", n:"Meine Telefonnummer", b:1, why:"Deine Nummer bleibt bei dir."},
+    {e:"🍪", n:"Wie man Kekse backt", b:0, why:"Gute Frage! Back aber am besten mit einem Erwachsenen."}
+  ]},
+  {t:"quiz", label:"Was ist fair?", qs:[
+    {q:"Deine Freundin will mit KI ein lustiges Bild von einem Mitschüler machen und es in die Klassengruppe schicken.", o:["Lustig, mach doch!","Nein, das kann ihn verletzen. Ohne seine Erlaubnis geht das gar nicht."], a:1, why:"Was für die einen lustig ist, kann für andere sehr wehtun."},
+    {q:"Du sollst eine Geschichte schreiben. Eine KI könnte sie für dich schreiben.", o:["Ich lasse die KI alles schreiben und sage nichts","Ich schreibe selbst. Wenn mir eine KI hilft, sage ich es ehrlich."], a:1, why:"Deine eigenen Ideen sind wichtig. Und Ehrlichkeit auch."},
+    {q:"Ein Chatbot schreibt: „Ich bin dein bester Freund. Erzähl mir deine Geheimnisse!“", o:["Ich erzähle ihm alles","Ein Chatbot ist kein Freund. Geheimnisse erzähle ich Menschen, denen ich vertraue."], a:1, why:"Ein Chatbot kann freundlich schreiben, aber er ist ein Programm und kein Freund."}
+  ]},
+  {t:"pledge"}
+]}
+];
+
+const PLEDGES = [
+  "Ich verrate keiner KI meine Adresse, Passwörter oder Fotos.",
+  "Ich prüfe nach, ob stimmt, was eine KI sagt.",
+  "Ich mache keine KI-Bilder, die andere verletzen.",
+  "Ich sage ehrlich, wenn mir eine KI geholfen hat.",
+  "Ich frage einen Erwachsenen, wenn mir etwas komisch vorkommt.",
+  "Ich denke zuerst selbst nach, bevor ich eine KI frage."
+];
+
+const SKILLS = [
+  "erklären, dass KI aus Beispielen lernt",
+  "selbst eine KI trainieren und testen",
+  "erkennen, warum eine KI Fehler macht",
+  "verstehen, wie Chatbots Wörter raten",
+  "Nachrichten und Bilder überprüfen",
+  "sicher und fair mit KI umgehen"
+];
+
+/* ================================================================
+   SPEICHERN (Supabase oder Testmodus)
+   ================================================================ */
+const ONLINE = !!(SUPABASE_URL && SUPABASE_KEY);
+
+async function rpc(fn, body){
+  const h = {"Content-Type":"application/json","apikey":SUPABASE_KEY};
+  if(SUPABASE_KEY.startsWith("eyJ")) h.Authorization = "Bearer " + SUPABASE_KEY;
+  let r;
+  try{
+    r = await fetch(SUPABASE_URL.replace(/\/$/,"") + "/rest/v1/rpc/" + fn, {method:"POST", headers:h, body:JSON.stringify(body)});
+  }catch(e){ throw new Error("NETZ"); }
+  const t = await r.text(); let d = null;
+  try{ d = t ? JSON.parse(t) : null; }catch(e){}
+  if(!r.ok) throw new Error((d && d.message) || "FEHLER");
+  return d;
+}
+
+const LOCAL_KEY = "kikurs_testmodus";
+function localDB(){ try{ return JSON.parse(localStorage.getItem(LOCAL_KEY)) || {}; }catch(e){ return {}; } }
+function localSet(db){ try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(db)); }catch(e){} }
+async function hashPw(p){
+  try{
+    const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("kikurs:" + p));
+    return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("");
+  }catch(e){ return "plain:" + p; }
+}
+
+const api = {
+  async register(n, p){
+    if(ONLINE) return rpc("kikurs_registrieren", {p_name:n, p_passwort:p});
+    n = n.trim();
+    if(n.length < 2 || n.length > 30) throw new Error("NAME_LAENGE");
+    if(p.length < 4) throw new Error("PASSWORT_LAENGE");
+    const db = localDB(), k = n.toLowerCase();
+    if(db[k]) throw new Error("NAME_VERGEBEN");
+    db[k] = {name:n, h:await hashPw(p), f:{}}; localSet(db);
+    return {name:n, fortschritt:{}};
+  },
+  async login(n, p){
+    if(ONLINE) return rpc("kikurs_anmelden", {p_name:n, p_passwort:p});
+    const u = localDB()[n.trim().toLowerCase()];
+    if(!u || u.h !== await hashPw(p)) throw new Error("FALSCH");
+    return {name:u.name, fortschritt:u.f};
+  },
+  async save(n, p, f){
+    if(ONLINE) return rpc("kikurs_speichern", {p_name:n, p_passwort:p, p_fortschritt:f});
+    const db = localDB(), k = n.trim().toLowerCase();
+    if(!db[k]) throw new Error("FALSCH");
+    db[k].f = f; localSet(db); return true;
+  }
+};
+
+const ERR = {
+  NAME_VERGEBEN:"Diesen Spitznamen gibt es schon. Probier einen anderen, zum Beispiel mit einer Zahl dazu.",
+  FALSCH:"Spitzname oder Passwort stimmen nicht. Schau in deinem Heft nach!",
+  NAME_LAENGE:"Der Spitzname muss 2 bis 30 Zeichen lang sein.",
+  PASSWORT_LAENGE:"Das Passwort muss mindestens 4 Zeichen lang sein.",
+  NETZ:"Keine Verbindung zum Internet. Prüf die Verbindung und versuch es nochmal."
+};
+const errText = e => ERR[e.message] || "Da ist etwas schiefgegangen. Versuch es gleich noch einmal.";
+
+/* ================================================================
+   ZUSTAND
+   ================================================================ */
+let S = null;               // {name, pw, f}
+let view = {s:0, i:0};
+let stepDone = false;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+
+function freshProgress(f){
+  f = f && typeof f === "object" ? f : {};
+  return {
+    v:1,
+    pos: f.pos && Number.isInteger(f.pos.s) ? f.pos : {s:0, i:0},
+    done: Array.isArray(f.done) ? f.done : [],
+    stars: f.stars && typeof f.stars === "object" ? f.stars : {},
+    pledge: Array.isArray(f.pledge) ? f.pledge : [],
+    finished: f.finished || null
+  };
+}
+
+let saveTimer = null;
+function setStatus(k){
+  const el = $("#status");
+  el.className = "status" + (k === "err" ? " err" : "");
+  el.textContent = k === "saving" ? "Speichert …" : k === "ok" ? (ONLINE ? "✓ Gespeichert" : "✓ Gespeichert (Testmodus)") : k === "err" ? "⚠️ Nicht gespeichert – Internet prüfen" : "";
+}
+function save(now){
+  if(!S) return Promise.resolve();
+  clearTimeout(saveTimer); setStatus("saving");
+  const run = async () => { try{ await api.save(S.name, S.pw, S.f); setStatus("ok"); }catch(e){ setStatus("err"); } };
+  if(now) return run();
+  saveTimer = setTimeout(run, 500);
+  return Promise.resolve();
+}
+
+function setSession(){ try{ sessionStorage.setItem("kikurs_session", JSON.stringify({n:S.name, p:S.pw})); }catch(e){} }
+function clearSession(){ try{ sessionStorage.removeItem("kikurs_session"); }catch(e){} }
+
+function show(id){
+  ["login","map","station","finish"].forEach(x => $("#" + x).hidden = x !== id);
+  $("#pauseBtn").hidden = id === "login";
+  window.scrollTo(0, 0);
+}
+
+/* ================================================================
+   ANMELDEN
+   ================================================================ */
+let mode = "new";
+function setMode(m){
+  mode = m;
+  $("#tabNew").setAttribute("aria-selected", m === "new");
+  $("#tabBack").setAttribute("aria-selected", m === "back");
+  $("#pw2Wrap").hidden = m !== "new";
+  $("#nameHint").hidden = m !== "new";
+  $("#loginBtn").textContent = m === "new" ? "Los geht’s!" : "Weitermachen";
+  $("#loginMsg").hidden = true;
+}
+$("#tabNew").onclick = () => setMode("new");
+$("#tabBack").onclick = () => setMode("back");
+$("#eye").onclick = () => {
+  const t = $("#fPw").type === "password" ? "text" : "password";
+  $("#fPw").type = t; $("#fPw2").type = t;
+  $("#eye").setAttribute("aria-label", t === "password" ? "Passwort zeigen" : "Passwort verstecken");
+};
+function loginMsg(t, ok){ const m = $("#loginMsg"); m.textContent = t; m.className = "msg" + (ok ? " ok" : ""); m.hidden = false; }
+
+$("#loginForm").onsubmit = async ev => {
+  ev.preventDefault();
+  const n = $("#fName").value.trim(), p = $("#fPw").value;
+  if(mode === "new" && p !== $("#fPw2").value){ loginMsg("Die beiden Passwörter sind nicht gleich. Tipp sie nochmal ein."); return; }
+  $("#loginBtn").disabled = true;
+  try{
+    const r = mode === "new" ? await api.register(n, p) : await api.login(n, p);
+    startSession(r.name, p, r.fortschritt);
+  }catch(e){ loginMsg(errText(e)); }
+  $("#loginBtn").disabled = false;
+};
+
+function startSession(name, pw, f){
+  S = {name, pw, f:freshProgress(f)};
+  setSession();
+  $("#fPw").value = ""; $("#fPw2").value = "";
+  renderMap();
+}
+
+$("#pauseBtn").onclick = async () => {
+  await save(true);
+  S = null; clearSession(); setStatus("");
+  setMode("back");
+  show("login");
+  loginMsg("Super gemacht! Bis bald. Melde dich nächstes Mal mit „Ich war schon da“ an.", true);
+};
+$("#brandLink").onclick = e => { e.preventDefault(); if(S) renderMap(); };
+
+/* ================================================================
+   KARTE
+   ================================================================ */
+function starText(n){ n = n || 0; return "★".repeat(n) + '<span class="off">' + "★".repeat(3 - n) + "</span>"; }
+
+function renderMap(){
+  const f = S.f, done = f.done.length;
+  const hello = done === 0 ? "Hallo <b>" + esc(S.name) + "</b>! Schön, dass du da bist. Starte mit Station 1. Jede Station dauert etwa 15 bis 30 Minuten."
+    : done >= STATIONS.length ? "Wow, <b>" + esc(S.name) + "</b>, du hast alle Stationen geschafft! Du bist jetzt KI-Entdecker*in. Hol dir dein Zeugnis!"
+    : "Willkommen zurück, <b>" + esc(S.name) + "</b>! Du hast schon " + done + " von " + STATIONS.length + " Stationen geschafft. Weiter geht’s!";
+  $("#mapHello").innerHTML = hello;
+  $("#progText").textContent = done + " von " + STATIONS.length + " Stationen geschafft";
+  $("#progBar").setAttribute("aria-valuenow", done);
+  $("#progBar span").style.width = (done / STATIONS.length * 100) + "%";
+
+  const act = $("#mapActions"); act.innerHTML = "";
+  if(done >= STATIONS.length){
+    const b = document.createElement("button"); b.className = "btn go"; b.type = "button"; b.textContent = "🏅 Mein Zeugnis"; b.onclick = renderFinish; act.appendChild(b);
+  }else{
+    const p = f.pos, b = document.createElement("button"); b.className = "btn go"; b.type = "button";
+    b.textContent = (p.s === 0 && p.i === 0) ? "▶ Reise starten" : "▶ Weiter bei Station " + (p.s + 1);
+    b.onclick = () => openStation(p.s, p.i); act.appendChild(b);
+  }
+
+  const tr = $("#trail"); tr.innerHTML = "";
+  STATIONS.forEach((st, k) => {
+    const isDone = f.done.includes(st.id);
+    const unlocked = isDone || k <= f.pos.s;
+    const cur = !isDone && k === f.pos.s;
+    const li = document.createElement("li");
+    li.className = "stop" + (isDone ? " done" : "") + (cur ? " current" : "") + (!unlocked ? " locked" : "");
+    li.innerHTML =
+      '<div class="dot" style="background:' + (unlocked ? st.color : "var(--card)") + '" aria-hidden="true">' + (unlocked ? st.emoji : "🔒") + '</div>' +
+      (isDone ? '<span class="check" aria-hidden="true">✓</span>' : "") +
+      '<div class="info"><div><h3>' + (k + 1) + '. ' + st.title + '</h3><div class="meta">etwa ' + st.min + ' Minuten' +
+      (isDone ? ' · <span class="stars" aria-label="' + (f.stars[st.id] || 0) + ' von 3 Sternen">' + starText(f.stars[st.id]) + '</span>' : "") + '</div></div></div>';
+    const info = li.querySelector(".info");
+    if(unlocked){
+      const b = document.createElement("button"); b.type = "button"; b.className = "btn small" + (cur ? " go" : "");
+      b.textContent = isDone ? "Nochmal ansehen" : (cur && f.pos.i > 0 ? "Weitermachen" : "Starten");
+      b.onclick = () => openStation(k, cur ? f.pos.i : 0);
+      info.appendChild(b);
+    }else{
+      const s = document.createElement("span"); s.className = "meta"; s.textContent = "Erst die Station davor schaffen"; info.appendChild(s);
+    }
+    tr.appendChild(li);
+  });
+  show("map");
+}
+
+/* ================================================================
+   STATION
+   ================================================================ */
+function stepAlreadyDone(s, i){
+  const p = S.f.pos;
+  return S.f.done.includes(STATIONS[s].id) || s < p.s || (s === p.s && i < p.i);
+}
+function openStation(s, i){ view = {s, i}; renderStep(); show("station"); }
+$("#toMap").onclick = () => renderMap();
+
+function renderStep(){
+  const st = STATIONS[view.s], step = st.steps[view.i];
+  $("#stEmo").textContent = st.emoji; $("#stEmo").style.background = st.color;
+  $("#stTitle").textContent = "Station " + (view.s + 1) + ": " + st.title;
+  $("#stDots").innerHTML = st.steps.map((_, k) => '<i class="' + (k < view.i ? "on" : k === view.i ? "now" : "") + '"></i>').join("");
+  const body = $("#stepBody"); body.innerHTML = "";
+  stepDone = stepAlreadyDone(view.s, view.i) || step.t === "info";
+  RENDER[step.t](body, step, complete);
+  updateNav();
+  window.scrollTo(0, 0);
+}
+function complete(){ stepDone = true; updateNav(); }
+function updateNav(){
+  const st = STATIONS[view.s];
+  $("#prevBtn").disabled = view.i === 0;
+  $("#nextBtn").disabled = !stepDone;
+  $("#nextBtn").textContent = view.i === st.steps.length - 1 ? "Station beenden 🎉" : "Weiter ➡";
+  $("#needText").textContent = stepDone ? "" : "Mach zuerst die Aufgabe fertig.";
+}
+$("#prevBtn").onclick = () => { if(view.i > 0){ view.i--; renderStep(); } };
+$("#nextBtn").onclick = () => {
+  if(!stepDone) return;
+  const st = STATIONS[view.s];
+  if(view.i < st.steps.length - 1){
+    view.i++;
+    if(view.s === S.f.pos.s && view.i > S.f.pos.i){ S.f.pos.i = view.i; save(); }
+    renderStep();
+  }else finishStation();
+};
+
+function finishStation(){
+  const st = STATIONS[view.s], f = S.f;
+  const first = !f.done.includes(st.id);
+  if(first) f.done.push(st.id);
+  if(f.pos.s === view.s) f.pos = {s:view.s + 1, i:0};
+  const all = f.done.length >= STATIONS.length;
+  if(all && !f.finished) f.finished = new Date().toISOString().slice(0, 10);
+  save(true);
+  celebrate(st, all);
+}
+
+function celebrate(st, all){
+  const root = $("#overlayRoot");
+  const colors = ["#FFC83D","#FF6B8B","#1FB389","#8C7BFF","#3FA9F0"];
+  let conf = "";
+  if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    for(let k = 0; k < 60; k++) conf += '<i style="left:' + Math.random() * 100 + '%;background:' + colors[k % 5] + ';animation-delay:' + (Math.random() * .8) + 's"></i>';
+  }
+  root.innerHTML = '<div class="confetti">' + conf + '</div><div class="overlay" role="dialog" aria-modal="true" aria-labelledby="celT"><div class="card">' +
+    '<span class="sticker" aria-hidden="true">' + st.emoji + '</span><h2 id="celT">Station geschafft!</h2>' +
+    '<p>Du hast den Sticker <b>„' + st.title + '“</b> gesammelt.' + (S.f.stars[st.id] !== undefined ? '<br><span class="stars" style="font-size:1.6rem">' + starText(S.f.stars[st.id]) + '</span>' : "") + '</p>' +
+    '<button class="btn go" type="button" id="celBtn">' + (all ? "🏅 Zum Abzeichen" : "🗺️ Zur Karte") + '</button></div></div>';
+  const b = $("#celBtn"); b.focus();
+  b.onclick = () => { root.innerHTML = ""; all ? renderFinish() : renderMap(); };
+}
+
+/* ================================================================
+   BAUSTEINE
+   ================================================================ */
+function pixiSays(el, html){
+  const d = document.createElement("div"); d.className = "pixi-row";
+  d.innerHTML = '<svg class="pixi" aria-hidden="true"><use href="#pixi"/></svg><div class="bubble"><p>' + html + '</p></div>';
+  el.appendChild(d); return d;
+}
+function choice(el, Q, onRight){
+  const box = document.createElement("div");
+  box.innerHTML = '<p class="task">' + Q.q + '</p><div class="opts"></div><div class="fb" hidden aria-live="polite"></div>';
+  const opts = box.querySelector(".opts"), fb = box.querySelector(".fb");
+  let tries = 0;
+  Q.o.forEach((o, j) => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "opt"; b.textContent = o;
+    b.onclick = () => {
+      tries++;
+      if(j === Q.a){
+        b.classList.add("right");
+        opts.querySelectorAll("button").forEach(x => x.disabled = true);
+        fb.className = "fb good"; fb.innerHTML = "✅ <b>Richtig!</b> " + (Q.why || ""); fb.hidden = false;
+        onRight(tries === 1);
+      }else{
+        b.classList.add("wrong"); b.disabled = true;
+        fb.className = "fb bad"; fb.innerHTML = "🤔 Noch nicht ganz. Probier es nochmal!"; fb.hidden = false;
+      }
+    };
+    opts.appendChild(b);
+  });
+  el.appendChild(box); return box;
+}
+
+const RENDER = {
+  info(el, step){ pixiSays(el, step.text); },
+
+  sort(el, step, done){
+    const p = document.createElement("p"); p.className = "task"; p.textContent = step.task; el.appendChild(p);
+    const list = document.createElement("div"); list.className = "sort-list"; el.appendChild(list);
+    let left = step.items.length;
+    step.items.forEach(it => {
+      const row = document.createElement("div"); row.className = "sitem";
+      row.innerHTML = '<span class="e" aria-hidden="true">' + it.e + '</span><span class="n">' + it.n + '</span><div class="bins"></div>';
+      const bins = row.querySelector(".bins");
+      step.bins.forEach((bn, k) => {
+        const b = document.createElement("button"); b.type = "button"; b.className = "btn small"; b.textContent = bn;
+        b.onclick = () => {
+          if(k === it.b){
+            row.classList.add("ok");
+            bins.innerHTML = '<b>' + bn + ' ✅</b>';
+            const w = document.createElement("p"); w.className = "why"; w.textContent = it.why; row.appendChild(w);
+            if(--left === 0){ done(); pixiSays(el, "Toll sortiert! Alle richtig. 🎉"); }
+          }else{
+            row.classList.remove("shake"); void row.offsetWidth; row.classList.add("shake");
+          }
+        };
+        bins.appendChild(b);
+      });
+      list.appendChild(row);
+    });
+  },
+
+  quiz(el, step, done){
+    const stId = STATIONS[view.s].id, withStars = step.stars !== false;
+    if(step.label){ const h = document.createElement("h3"); h.textContent = step.label; el.appendChild(h); }
+    const wrap = document.createElement("div"); el.appendChild(wrap);
+    let k = 0, first = 0;
+    function ask(){
+      wrap.innerHTML = '<p class="qcount">Frage ' + (k + 1) + ' von ' + step.qs.length + '</p>';
+      choice(wrap, step.qs[k], ok => {
+        if(ok) first++;
+        const nb = document.createElement("button"); nb.type = "button"; nb.className = "btn small go"; nb.style.marginTop = "14px";
+        nb.textContent = k < step.qs.length - 1 ? "Nächste Frage ➡" : "Fertig ✓";
+        nb.onclick = () => { k++; k < step.qs.length ? ask() : finish(); };
+        wrap.appendChild(nb); nb.focus();
+      });
+    }
+    function finish(){
+      if(withStars && S.f.stars[stId] === undefined){ S.f.stars[stId] = Math.min(3, Math.round(first / step.qs.length * 3)); save(); }
+      const n = withStars ? (S.f.stars[stId] ?? 0) : null;
+      wrap.innerHTML = '<div class="result"><div class="big" aria-hidden="true">' + (withStars ? "🌟" : "🕵️") + '</div>' +
+        '<h3>Geschafft!</h3><p>Du hattest <b>' + first + ' von ' + step.qs.length + '</b> gleich beim ersten Versuch richtig.</p>' +
+        (withStars ? '<p class="stars" style="font-size:2rem" aria-label="' + n + ' von 3 Sternen">' + starText(n) + '</p>' : "") + '</div>';
+      done();
+    }
+    ask();
+  },
+
+  ext(el, step, done){
+    const h = document.createElement("h3"); h.textContent = step.title; el.appendChild(h);
+    pixiSays(el, step.intro);
+    const box = document.createElement("div"); box.className = "ext-box";
+    box.innerHTML = '<a class="btn go" href="' + step.url + '" target="_blank" rel="noopener">🚀 Seite öffnen</a>' +
+      '<p class="hint" style="margin-top:8px">Die Seite öffnet sich in einem neuen Tab. Komm danach hierher zurück.</p>' +
+      '<p style="font-weight:700;margin:12px 0 0">Das machst du dort:</p><ul class="todo">' +
+      step.todo.map((t, k) => '<li><label><input type="checkbox"> <span>' + t + '</span></label></li>').join("") + '</ul>' +
+      (step.alt ? '<p class="hint">' + step.alt.label + ' <a href="' + step.alt.url + '" target="_blank" rel="noopener">Teachable Machine öffnen</a></p>' : "");
+    el.appendChild(box);
+    const q = document.createElement("div"); q.style.marginTop = "8px";
+    q.innerHTML = '<p style="font-weight:700;margin-bottom:6px">Wieder da? Dann beantworte diese Frage:</p>';
+    el.appendChild(q);
+    choice(q, step.check, () => done());
+  },
+
+  monster(el, step, done){
+    const TRAIN = [
+      {c:0,e:1,h:0,t:0},{c:1,e:3,h:1,t:1},{c:0,e:3,h:0,t:1},
+      {c:1,e:1,h:1,t:0},{c:0,e:1,h:1,t:0},{c:1,e:3,h:0,t:1}
+    ];
+    const TEST = [{c:0,e:3,h:1,t:0},{c:1,e:1,h:0,t:1},{c:0,e:1,h:0,t:1},{c:1,e:3,h:1,t:0}];
+    const L = ["😊 lieb","😈 frech"];
+    const lab = {};
+    pixiSays(el, "Jetzt bist <b>du</b> die Lehrerin oder der Lehrer! Schau dir die Monster an und sag mir bei jedem: Ist es <b>lieb</b> oder <b>frech</b>? Du bestimmst die Regel. Achte zum Beispiel auf Farbe, Augen, Hörner oder Zähne.");
+    const p1 = document.createElement("p"); p1.className = "task"; p1.textContent = "1. Gib Pixi Beispiele"; el.appendChild(p1);
+    const g = document.createElement("div"); g.className = "mgrid"; el.appendChild(g);
+    TRAIN.forEach((m, k) => {
+      const d = document.createElement("div"); d.className = "mon";
+      d.innerHTML = monsterSVG(m) + '<div class="row"></div>';
+      const row = d.querySelector(".row");
+      L.forEach((l, j) => {
+        const b = document.createElement("button"); b.type = "button"; b.className = "pick"; b.textContent = l; b.setAttribute("aria-pressed", "false");
+        b.onclick = () => { lab[k] = j; row.querySelectorAll("button").forEach((x, xi) => x.setAttribute("aria-pressed", xi === j)); trainBtn.disabled = Object.keys(lab).length < TRAIN.length; };
+        row.appendChild(b);
+      });
+      g.appendChild(d);
+    });
+    const trainBtn = document.createElement("button"); trainBtn.type = "button"; trainBtn.className = "btn go"; trainBtn.style.marginTop = "16px";
+    trainBtn.textContent = "🧠 Pixi lernen lassen"; trainBtn.disabled = true; el.appendChild(trainBtn);
+    const out = document.createElement("div"); el.appendChild(out);
+
+    function guess(m){
+      let best = -1, votes = [0, 0];
+      TRAIN.forEach((t, k) => {
+        const sim = (t.c === m.c) + (t.e === m.e) + (t.h === m.h) + (t.t === m.t);
+        if(sim > best){ best = sim; votes = [0, 0]; }
+        if(sim === best) votes[lab[k]]++;
+      });
+      return votes[1] > votes[0] ? 1 : 0;
+    }
+    trainBtn.onclick = () => {
+      trainBtn.disabled = true;
+      out.innerHTML = '<div class="machine-anim"><span class="gear" aria-hidden="true">⚙️</span> Pixi sucht Muster in deinen Beispielen …</div>';
+      setTimeout(() => {
+        out.innerHTML = '<p class="task" style="margin-top:18px">2. Pixi rät bei neuen Monstern. Hat Pixi recht?</p>';
+        const tg = document.createElement("div"); tg.className = "mgrid four"; out.appendChild(tg);
+        let answered = 0, right = 0;
+        TEST.forEach(m => {
+          const gs = guess(m);
+          const d = document.createElement("div"); d.className = "mon";
+          d.innerHTML = monsterSVG(m) + '<p class="lbl">Pixi sagt: ' + L[gs] + '</p><div class="row"></div>';
+          const row = d.querySelector(".row");
+          [["👍 Stimmt",1],["👎 Falsch",0]].forEach(([t, v]) => {
+            const b = document.createElement("button"); b.type = "button"; b.className = "pick"; b.textContent = t; b.setAttribute("aria-pressed","false");
+            b.onclick = () => {
+              if(row.dataset.a) return;
+              row.dataset.a = 1; b.setAttribute("aria-pressed","true");
+              answered++; right += v;
+              if(answered === TEST.length){
+                const msg = right === 4 ? "Wow, ich habe alle 4 richtig erraten! Deine Beispiele waren richtig gut."
+                  : right >= 2 ? "Ich hatte " + right + " von 4 richtig. Bei den anderen hatte ich keine passenden Beispiele. Mit mehr Beispielen würde ich besser werden!"
+                  : "Oje, nur " + right + " von 4 richtig! Deine Regel war für mich schwer zu finden. Eine KI braucht viele und deutliche Beispiele.";
+                pixiSays(out, msg + "<br><br>So geht es auch echten KIs: <b>Sie sind nur so gut wie ihre Beispiele.</b>");
+                done();
+              }
+            };
+            row.appendChild(b);
+          });
+          tg.appendChild(d);
+        });
+      }, 1400);
+    };
+  },
+
+  bias(el, step, done){
+    pixiSays(el, "Ich habe gelernt, Äpfel zu erkennen! Das waren meine Beispiele:");
+    const ex = document.createElement("p"); ex.style.fontSize = "2.6rem"; ex.style.textAlign = "center"; ex.style.margin = "0 0 6px";
+    ex.setAttribute("aria-label", "Fünf rote Äpfel"); ex.textContent = "🍎 🍎 🍎 🍎 🍎"; el.appendChild(ex);
+    const t1 = document.createElement("div"); el.appendChild(t1);
+    const ITEMS = [{e:"🍎",n:"roter Apfel",apple:true},{e:"🍅",n:"Tomate",apple:false},{e:"🍏",n:"grüner Apfel",apple:true}];
+    function table(target, smart){
+      target.innerHTML = '<p class="task" style="margin-top:14px">' + (smart ? "Pixi testet nochmal:" : "Jetzt teste ich mich selbst:") + '</p>';
+      const g = document.createElement("div"); g.className = "sort-list";
+      ITEMS.forEach(it => {
+        const says = smart ? it.apple : it.e !== "🍏";
+        const ok = says === it.apple;
+        const r = document.createElement("div"); r.className = "sitem" + (ok ? " ok" : "");
+        r.innerHTML = '<span class="e" aria-hidden="true">' + it.e + '</span><span class="n">' + it.n + '</span><b>Pixi: „' + (says ? "Apfel!" : "Kein Apfel!") + '“ ' + (ok ? "✅" : "❌") + '</b>';
+        g.appendChild(r);
+      });
+      target.appendChild(g);
+    }
+    table(t1, false);
+    const q = document.createElement("div"); q.style.marginTop = "18px"; el.appendChild(q);
+    choice(q, {q:"Pixi hat sich zweimal geirrt. Warum?", o:["Pixi ist einfach dumm","Pixi hat nur rote Äpfel gesehen und denkt: rund und rot = Apfel","Äpfel sind immer rot"], a:1, why:"Pixi hat gelernt: rund und rot heißt Apfel. Darum hält Pixi die Tomate für einen Apfel und den grünen Apfel nicht."}, () => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "btn go"; b.style.marginTop = "16px";
+      b.textContent = "➕ Grüne Äpfel und Tomaten als Beispiele dazugeben"; q.appendChild(b);
+      b.onclick = () => {
+        b.disabled = true;
+        const ex2 = document.createElement("p"); ex2.style.fontSize = "2.2rem"; ex2.style.textAlign = "center"; ex2.style.margin = "14px 0 0";
+        ex2.innerHTML = '🍏 🍏 🍏 <span style="font-size:1rem;vertical-align:middle">= Apfel</span> &nbsp; 🍅 🍅 🍅 <span style="font-size:1rem;vertical-align:middle">= kein Apfel</span>';
+        q.appendChild(ex2);
+        const t2 = document.createElement("div"); q.appendChild(t2);
+        setTimeout(() => { table(t2, true); pixiSays(q, "Jetzt klappt es! Mit <b>besseren, vielfältigeren Beispielen</b> bin ich viel klüger geworden."); done(); }, 900);
+      };
+    });
+  },
+
+  words(el, step, done){
+    const ROUNDS = [
+      {s:"Die Katze trinkt", w:[["Milch",62],["Wasser",31],["Limo",5],["Benzin",2]]},
+      {s:"Im Winter fällt", w:[["Schnee",78],["Regen",15],["Laub",5],["Pizza",2]]},
+      {s:"Ich putze mir die", w:[["Zähne",86],["Schuhe",7],["Nase",5],["Wolken",2]]},
+      {s:"Der berühmte Ritter Kuno von Blaubeerstein wurde geboren im Jahr", w:[["1423",34],["1512",29],["1389",22],["1600",15]], trap:true}
+    ];
+    let r = 0;
+    const box = document.createElement("div"); el.appendChild(box);
+    function round(){
+      const R = ROUNDS[r];
+      box.innerHTML = '<p class="qcount">Runde ' + (r + 1) + ' von ' + ROUNDS.length + '</p><p class="task">Welches Wort wählt Pixi als Nächstes?</p>' +
+        '<p class="sentence">' + R.s + ' <span class="gap">?</span></p><div class="opts"></div><div class="bars"></div>';
+      const opts = box.querySelector(".opts"), bars = box.querySelector(".bars");
+      const shuffled = R.w.slice().sort(() => Math.random() - .5);
+      shuffled.forEach(([w]) => {
+        const b = document.createElement("button"); b.type = "button"; b.className = "opt"; b.textContent = w;
+        b.onclick = () => {
+          opts.querySelectorAll("button").forEach(x => { x.disabled = true; if(x.textContent === R.w[0][0]) x.classList.add("right"); });
+          if(w !== R.w[0][0]) b.classList.add("wrong");
+          box.querySelector(".gap").textContent = R.w[0][0];
+          bars.innerHTML = '<p style="font-weight:700;margin:16px 0 4px">So wahrscheinlich ist jedes Wort für Pixi:</p>' +
+            R.w.map(([ww, pc]) => '<div class="bar"><span class="w">' + ww + '</span><span class="track"><span class="fill" data-p="' + pc + '"></span></span><span class="pct">' + pc + ' %</span></div>').join("");
+          requestAnimationFrame(() => requestAnimationFrame(() => bars.querySelectorAll(".fill").forEach(f => f.style.width = f.dataset.p + "%")));
+          const msg = R.trap
+            ? "Achtung, Falle! <b>Ritter Kuno von Blaubeerstein gibt es gar nicht.</b> Ich habe ihn nie gekannt. Trotzdem habe ich eine Jahreszahl gewählt und klinge ganz sicher. So erfinden Chatbots manchmal Dinge!"
+            : (w === R.w[0][0] ? "Genau! Dieses Wort habe ich in meinen Texten am häufigsten nach diesem Satzanfang gelesen." : "Fast! Ich wähle das Wort, das ich am häufigsten gelesen habe.");
+          pixiSays(bars, msg);
+          const nb = document.createElement("button"); nb.type = "button"; nb.className = "btn small go";
+          nb.textContent = r < ROUNDS.length - 1 ? "Nächste Runde ➡" : "Fertig ✓";
+          nb.onclick = () => { r++; if(r < ROUNDS.length) round(); else { box.innerHTML = ""; pixiSays(box, "Jetzt weißt du, wie ein Chatbot schreibt: <b>Er rät Wort für Wort.</b> Meistens passt das gut, aber manchmal erfindet er Dinge und merkt es nicht."); done(); } };
+          bars.appendChild(nb);
+        };
+        opts.appendChild(b);
+      });
+    }
+    round();
+  },
+
+  pledge(el, step, done){
+    pixiSays(el, "Zum Schluss: Such dir <b>3 Regeln</b> aus, die du versprichst. Sie kommen auf dein Zeugnis!");
+    const sel = new Set(S.f.pledge.filter(x => x < PLEDGES.length));
+    const g = document.createElement("div"); g.className = "pledge"; el.appendChild(g);
+    const info = document.createElement("p"); info.className = "hint"; info.style.marginTop = "10px"; el.appendChild(info);
+    function upd(){
+      g.querySelectorAll("button").forEach((b, k) => { const on = sel.has(k); b.setAttribute("aria-pressed", on); b.querySelector(".box").textContent = on ? "✓" : ""; });
+      info.textContent = sel.size + " von 3 ausgewählt";
+      if(sel.size === 3){ S.f.pledge = [...sel]; save(); done(); }
+      else { stepDone = false; updateNav(); }
+    }
+    PLEDGES.forEach((t, k) => {
+      const b = document.createElement("button"); b.type = "button";
+      b.innerHTML = '<span class="box" aria-hidden="true"></span><span>' + t + '</span>';
+      b.onclick = () => { if(sel.has(k)) sel.delete(k); else if(sel.size < 3) sel.add(k); upd(); };
+      g.appendChild(b);
+    });
+    upd();
+  }
+};
+
+function monsterSVG(m){
+  const body = m.c ? "#9B7BFF" : "#34C98F";
+  const eyes = m.e === 1
+    ? '<circle cx="50" cy="44" r="13" fill="#fff" stroke="#22245A" stroke-width="2.5"/><circle cx="52" cy="46" r="5.5" fill="#22245A"/>'
+    : [30,50,70].map(x => '<circle cx="' + x + '" cy="44" r="8.5" fill="#fff" stroke="#22245A" stroke-width="2.5"/><circle cx="' + (x + 1) + '" cy="45" r="3.6" fill="#22245A"/>').join("");
+  const horns = m.h ? '<path d="M30 26 L20 4 L42 18Z M70 26 L80 4 L58 18Z" fill="#FFC83D" stroke="#22245A" stroke-width="2.5" stroke-linejoin="round"/>' : "";
+  const mouth = m.t
+    ? '<path d="M33 66 Q50 82 67 66Z" fill="#22245A"/><path d="M36 67 L40 74 L44 68 L48 75 L52 68 L56 75 L60 68 L64 73 L64 67Z" fill="#fff"/>'
+    : '<path d="M36 67 Q50 78 64 67" stroke="#22245A" stroke-width="4" fill="none" stroke-linecap="round"/>';
+  const desc = (m.c ? "lila" : "grün") + ", " + m.e + (m.e === 1 ? " Auge" : " Augen") + (m.h ? ", Hörner" : "") + (m.t ? ", spitze Zähne" : "");
+  return '<svg viewBox="0 0 100 100" role="img" aria-label="Monster: ' + desc + '">' + horns +
+    '<rect x="16" y="20" width="68" height="70" rx="30" fill="' + body + '" stroke="#22245A" stroke-width="3.5"/>' +
+    '<rect x="26" y="84" width="14" height="12" rx="6" fill="' + body + '" stroke="#22245A" stroke-width="3"/><rect x="60" y="84" width="14" height="12" rx="6" fill="' + body + '" stroke="#22245A" stroke-width="3"/>' +
+    eyes + mouth + '</svg>';
+}
+
+/* ================================================================
+   ABZEICHEN & ZEUGNIS
+   ================================================================ */
+function badgeSVG(){
+  return '<svg viewBox="0 0 200 240" role="img" aria-label="Abzeichen KI-Entdecker*in">' +
+    '<path d="M60 130 L40 230 L72 210 L92 236 L100 140Z" fill="#FF6B8B" stroke="#22245A" stroke-width="4" stroke-linejoin="round"/>' +
+    '<path d="M140 130 L160 230 L128 210 L108 236 L100 140Z" fill="#3FA9F0" stroke="#22245A" stroke-width="4" stroke-linejoin="round"/>' +
+    '<circle cx="100" cy="92" r="82" fill="#FFC83D" stroke="#22245A" stroke-width="5"/>' +
+    '<circle cx="100" cy="92" r="66" fill="#FFE08A" stroke="#22245A" stroke-width="3" stroke-dasharray="6 6"/>' +
+    '<use href="#pixi" x="62" y="32" width="76" height="76"/>' +
+    '<path id="arcB" d="M42 92 A58 58 0 0 0 158 92" fill="none"/>' +
+    '<text font-family="Baloo 2, sans-serif" font-weight="800" font-size="15" fill="#22245A" letter-spacing="1"><textPath href="#arcB" startOffset="50%" text-anchor="middle">KI-ENTDECKER*IN</textPath></text>' +
+    '</svg>';
+}
+function renderFinish(){
+  const f = S.f;
+  $("#badgeWrap").innerHTML = badgeSVG();
+  $("#finTitle").textContent = "Herzlichen Glückwunsch, " + S.name + "!";
+  const date = f.finished ? new Date(f.finished + "T12:00:00").toLocaleDateString("de-AT", {day:"numeric", month:"long", year:"numeric"}) : "";
+  const total = STATIONS.reduce((a, st) => a + (f.stars[st.id] || 0), 0);
+  $("#zeugnis").innerHTML =
+    '<div class="seal">' + badgeSVG() + '</div>' +
+    '<h2>Zeugnis</h2><p class="sub">KI-Lernreise mit Pixi</p>' +
+    '<p style="text-align:center;margin:0">Hiermit wird bestätigt, dass</p>' +
+    '<div class="name">' + esc(S.name) + '</div>' +
+    '<p style="text-align:center">alle 7 Stationen der KI-Lernreise erfolgreich abgeschlossen hat und damit<br><b>KI-Entdecker*in</b> ist.</p>' +
+    '<table>' + STATIONS.map((st, k) => '<tr><td>' + st.emoji + ' ' + (k + 1) + '. ' + st.title + '</td><td class="stars">' + starText(f.stars[st.id]) + '</td></tr>').join("") +
+    '<tr><td><b>Sterne gesamt</b></td><td><b>' + total + ' von ' + (STATIONS.length * 3) + '</b></td></tr></table>' +
+    '<div class="two"><div><h3>Das kann ich jetzt</h3><ul>' + SKILLS.map(s => '<li>' + s + '</li>').join("") + '</ul></div>' +
+    '<div><h3>Mein KI-Versprechen</h3><ul>' + (f.pledge.length ? f.pledge.map(k => '<li>' + PLEDGES[k] + '</li>').join("") : "<li>–</li>") + '</ul></div></div>' +
+    '<div class="sign"><div>Datum: ' + date + '</div><div>Unterschrift Lehrer*in</div></div>';
+  show("finish");
+}
+$("#finToMap").onclick = () => renderMap();
+
+/* ================================================================
+   START
+   ================================================================ */
+$("#backLink").href = WERKSTATT_LINK;
+$("#testNote").hidden = ONLINE;
+setMode("new");
+(async () => {
+  let ses = null;
+  try{ ses = JSON.parse(sessionStorage.getItem("kikurs_session")); }catch(e){}
+  if(ses && ses.n && ses.p){
+    try{ const r = await api.login(ses.n, ses.p); startSession(r.name, ses.p, r.fortschritt); return; }catch(e){ clearSession(); }
+  }
+  show("login");
+})();
+</script>
+</body>
+</html>
