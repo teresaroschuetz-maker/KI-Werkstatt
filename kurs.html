@@ -288,12 +288,30 @@ input:focus{border-color:var(--ink);outline:none}
   .pixi-row svg.pixi{width:70px;height:70px}
 }
 @media print{
-  @page{size:A4;margin:12mm}
-  body{background:#fff}
-  body > *:not(main), .top, .no-print, .badge-wrap{display:none!important}
+  @page{size:A4 portrait;margin:10mm}
+  html,body{background:#fff!important;font-size:12pt;line-height:1.4}
+  body > *:not(main), .top, .no-print, .badge-wrap, .confetti, .overlay{display:none!important}
   main > section:not(#finish){display:none!important}
-  .finish{padding:0}
-  .zeugnis{border-width:6px;max-width:none}
+  .finish{padding:0!important}
+  .finish .wrap{max-width:none;padding:0}
+  .zeugnis{max-width:none!important;margin:0!important;padding:12mm 14mm 10mm!important;border-width:6px;border-radius:8px;min-height:268mm;display:flex;flex-direction:column;break-inside:avoid;page-break-inside:avoid}
+  .zeugnis h2{font-size:34pt;margin:0}
+  .zeugnis h3{font-size:14pt;margin:0 0 4pt}
+  .zeugnis p{margin:0 0 7pt}
+  .zeugnis .sub{margin-bottom:16pt;font-size:13pt}
+  .zeugnis .hand{margin:16pt 0 4pt}
+  .zeugnis .hand span{height:40px;width:250px}
+  .zeugnis .lern{font-size:9pt;margin-bottom:12pt}
+  .zeugnis table{margin:12pt 0 18pt;font-size:12pt}
+  .zeugnis td{padding:6pt 4pt}
+  .zeugnis .two{grid-template-columns:1fr 1fr!important;gap:14pt}
+  .zeugnis ul{font-size:11pt;padding-left:1.1em}
+  .zeugnis li{margin:0 0 3pt}
+  .zeugnis .sign{margin-top:auto;padding-top:30pt}
+  .zeugnis .sign div{font-size:10pt}
+  .zeugnis .seal{display:block!important;width:90px;height:108px;right:20px;top:18px}
+  .zeugnis .stars{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 }
 </style>
 </head>
