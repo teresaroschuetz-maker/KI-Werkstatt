@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Datenschutz – KI-Werkstatt Volksschule</title>
+<meta name="robots" content="noindex">
+<style>
+:root{
+  color-scheme: light;
+  --paper:#FBFCFE; --grid:#DDE7F3; --margin:#E26464;
+  --ink:#1D2A44; --ink-soft:#4A5878; --blue:#2448A8;
+  --yellow:#F2C230; --yellow-soft:#FFF4CC; --card:#FFFFFF; --line:#C9D5E6; --chip:#EEF3FA; --mark:#FFE58A;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#141B29; --grid:#1E2A3E; --margin:#8C3C40; --ink:#E8EDF6; --ink-soft:#A9B6CC; --blue:#8FB0FF;
+    --yellow-soft:#3A3218; --card:#1A2335; --line:#2E3C56; --chip:#22304A; --mark:#6B5A12;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#141B29; --grid:#1E2A3E; --margin:#8C3C40; --ink:#E8EDF6; --ink-soft:#A9B6CC; --blue:#8FB0FF;
+  --yellow-soft:#3A3218; --card:#1A2335; --line:#2E3C56; --chip:#22304A; --mark:#6B5A12;
+}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;font-family:"Atkinson Hyperlegible","Segoe UI",Verdana,sans-serif;font-size:1.0625rem;line-height:1.65;color:var(--ink);
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+h1,h2,h3{font-family:"Trebuchet MS","Segoe UI",sans-serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(2rem,5vw,2.8rem);font-weight:800}
+h2{font-size:1.4rem;font-weight:800;margin-top:1.8em}
+h3{font-size:1.1rem;margin-top:1.3em}
+p,ul{margin:0 0 1em}
+li{margin-bottom:.35em}
+a{color:var(--blue);text-underline-offset:3px}
+a:focus-visible{outline:3px solid var(--yellow);outline-offset:3px;border-radius:4px}
+mark{background:var(--mark);color:inherit;padding:0 4px;border-radius:4px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:2px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:60px;flex-wrap:wrap}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+.brand{font-weight:800;font-size:1.1rem;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand-mark{width:30px;height:30px;border-radius:8px;background:var(--yellow);display:grid;place-items:center;color:#1D2A44}
+nav a{color:var(--ink);text-decoration:none;padding:6px 10px;border-radius:8px}
+nav a:hover,nav a[aria-current]{background:var(--chip)}
+main{padding:48px 0 64px}
+.sheet{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:32px clamp(18px,4vw,40px)}
+.kid{background:var(--yellow-soft);border-left:5px solid var(--yellow);border-radius:0 12px 12px 0;padding:14px 18px;margin:0 0 1.5em}
+.kid p:last-child{margin:0}
+.note{font-size:.95rem;color:var(--ink-soft)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 18px;margin:0 0 1em}
+dt{font-weight:700}
+dd{margin:0}
+@media (max-width:560px){dl{grid-template-columns:1fr}dd{margin-bottom:8px}}
+footer{padding:24px 0 48px;text-align:center;font-size:.95rem;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">🤖</span>KI-Werkstatt Volksschule</a>
+    <nav aria-label="Navigation">
+      <a href="index.html">Startseite</a>
+      <a href="kurs.html">Kinderkurs</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <article class="sheet">
+      <h1>Datenschutzerklärung</h1>
+      <p class="note">Stand: <mark>[Datum]</mark></p>
+
+      <div class="kid">
+        <p><b>Kurz erklärt für Kinder:</b> Für die KI-Lernreise speichern wir nur deinen Lern-Namen, dein Passwort in verschlüsselter Form und wie weit du schon gekommen bist. Deinen echten Namen, deine Adresse oder Fotos speichern wir nie. Darum bekommst du einen Fantasienamen. Wenn du möchtest, dass deine Daten gelöscht werden, sag es deiner Lehrerin oder deinem Lehrer.</p>
+      </div>
+
+      <h2>1. Verantwortliche</h2>
+      <p>Verantwortlich für die Datenverarbeitung auf dieser Website ist <mark>[Vorname Nachname]</mark>, <mark>[Ort]</mark>, Österreich, E-Mail: <mark>[E-Mail-Adresse]</mark>.</p>
+
+      <h2>2. Das Wichtigste im Überblick</h2>
+      <p>Diese Website kommt ohne Cookies, ohne Werbung, ohne Nutzungsstatistiken und ohne Tracking aus. Personenbezogene Daten werden nur verarbeitet, soweit das für die Bereitstellung der Website und des Selbstlernkurses technisch notwendig ist. Der Kurs ist so gebaut, dass Kinder keine echten Namen oder Kontaktdaten angeben müssen.</p>
+
+      <h2>3. Hosting der Website</h2>
+      <p>Diese Website wird über GitHub Pages bereitgestellt, einen Dienst der GitHub, Inc. (USA). Beim Aufruf der Seiten verarbeitet GitHub technisch notwendige Verbindungsdaten wie die IP-Adresse, den Zeitpunkt des Aufrufs und Informationen über den verwendeten Browser. Diese Daten werden benötigt, um die Seiten auszuliefern und die Sicherheit des Dienstes zu gewährleisten.</p>
+      <p>Rechtsgrundlage ist das berechtigte Interesse an einer sicheren und funktionierenden Bereitstellung der Website (Art. 6 Abs. 1 lit. f DSGVO). Eine Übermittlung in die USA erfolgt auf Grundlage des EU-US Data Privacy Framework beziehungsweise von Standardvertragsklauseln. Weitere Informationen finden Sie in der <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Datenschutzerklärung von GitHub</a>.</p>
+
+      <h2>4. Schriftarten</h2>
+      <p>Zur Darstellung werden Schriftarten von Google Fonts verwendet, einem Dienst der Google Ireland Limited. Beim Aufruf der Seite lädt Ihr Browser die Schriftarten von Servern von Google. Dabei wird Ihre IP-Adresse an Google übermittelt. Rechtsgrundlage ist das berechtigte Interesse an einer einheitlichen und gut lesbaren Darstellung (Art. 6 Abs. 1 lit. f DSGVO). Weitere Informationen finden Sie in der <a href="https://policies.google.com/privacy?hl=de" target="_blank" rel="noopener">Datenschutzerklärung von Google</a>.</p>
+
+      <h2>5. Selbstlernkurs „KI-Lernreise“</h2>
+      <h3>Welche Daten gespeichert werden</h3>
+      <p>Damit Kinder den Kurs unterbrechen und später fortsetzen können, werden folgende Daten gespeichert:</p>
+      <ul>
+        <li>ein zufällig erzeugter Lern-Name (zum Beispiel „Nebeldrache42“), kein echter Name,</li>
+        <li>das selbst gewählte Passwort, ausschließlich verschlüsselt als bcrypt-Hash, sodass es niemand im Klartext lesen kann, auch nicht die Betreiberin,</li>
+        <li>der Lernfortschritt: abgeschlossene Stationen, Sterne aus den Quizfragen, die gewählten Regeln für das KI-Versprechen, der gewählte Roboter und sein Fantasiename sowie die Angabe, ob allein oder zu zweit gelernt wird,</li>
+        <li>der Zeitpunkt der Anmeldung und der letzten Speicherung.</li>
+      </ul>
+      <p>Es werden keine E-Mail-Adressen, Klarnamen, Fotos, Standortdaten oder Eingaben aus den verlinkten Übungen anderer Anbieter gespeichert. Die Antworten auf einzelne Quizfragen werden nicht gespeichert, nur die Anzahl der Sterne pro Station.</p>
+
+      <h3>Zweck und Rechtsgrundlage</h3>
+      <p>Die Daten werden ausschließlich verarbeitet, um den Lernfortschritt zu speichern und am Ende das Zeugnis zu erstellen. Rechtsgrundlage ist das berechtigte Interesse an der Bereitstellung eines datensparsamen Lernangebots (Art. 6 Abs. 1 lit. f DSGVO). Durch den zufälligen Lern-Namen ist für Außenstehende nicht erkennbar, welches Kind sich hinter einem Zugang verbirgt.</p>
+
+      <h3>Zeugnis</h3>
+      <p>Das Zeugnis wird direkt im Browser erzeugt und nicht gespeichert. Die echten Namen der Kinder werden erst nach dem Ausdrucken mit der Hand eingetragen und gelangen nie auf diese Website.</p>
+
+      <h3>Auftragsverarbeiter</h3>
+      <p>Die Kursdaten werden in einer Datenbank des Dienstes Supabase gespeichert. Vertragspartner ist die Supabase Pte. Ltd. (Singapur). Die Daten liegen auf Servern in Frankfurt am Main (Deutschland). Mit Supabase besteht ein Auftragsverarbeitungsvertrag nach Art. 28 DSGVO, der auch Standardvertragsklauseln der EU-Kommission für mögliche Übermittlungen außerhalb der EU umfasst. Weitere Informationen finden Sie in der <a href="https://supabase.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung von Supabase</a>.</p>
+
+      <h3>Speicherdauer</h3>
+      <p>Die Kursdaten werden <mark>[am Ende des Schuljahres / spätestens 12 Monate nach der letzten Nutzung]</mark> gelöscht. Auf Wunsch werden sie jederzeit früher gelöscht.</p>
+
+      <h2>6. Speicherung im Browser</h2>
+      <p>Damit ein Kind nach dem Neuladen der Seite nicht erneut angemeldet werden muss, werden Lern-Name und Passwort im Sitzungsspeicher des Browsers (sessionStorage) abgelegt. Dieser Speicher wird automatisch geleert, wenn der Browser-Tab geschlossen wird oder das Kind auf „Pause machen“ klickt. Es handelt sich nicht um Cookies, und die Daten werden nicht an Dritte weitergegeben. Rechtsgrundlage ist § 165 Abs. 3 Telekommunikationsgesetz 2021, da die Speicherung für den ausdrücklich gewünschten Dienst unbedingt erforderlich ist.</p>
+      <p>Bitte achten Sie auf gemeinsam genutzten Schulgeräten darauf, dass Kinder nach der Arbeit auf „Pause machen“ klicken oder den Tab schließen.</p>
+
+      <h2>7. Links zu anderen Angeboten</h2>
+      <p>Diese Website verlinkt auf Angebote anderer Anbieter, etwa Code.org, LearningML, Teachable Machine, Quick, Draw! oder das Klexikon. Erst wenn Sie einen solchen Link anklicken, werden Daten an den jeweiligen Anbieter übertragen. Für diese Angebote gelten deren eigene Datenschutzbestimmungen. Wir empfehlen, diese Werkzeuge im Unterricht gemeinsam mit der Lehrkraft zu verwenden und keine Fotos von Gesichtern oder persönliche Angaben einzugeben.</p>
+
+      <h2>8. Ihre Rechte</h2>
+      <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung Ihrer Daten sowie das Recht auf Datenübertragbarkeit und auf Widerspruch gegen die Verarbeitung. Bei Kindern können diese Rechte von den Erziehungsberechtigten ausgeübt werden. Wenden Sie sich dazu an <mark>[E-Mail-Adresse]</mark> oder an die Lehrkraft und nennen Sie den Lern-Namen, damit der Zugang gefunden werden kann.</p>
+      <p>Wenn Sie der Meinung sind, dass die Verarbeitung Ihrer Daten gegen das Datenschutzrecht verstößt, können Sie sich bei der Aufsichtsbehörde beschweren. In Österreich ist das die <a href="https://www.dsb.gv.at" target="_blank" rel="noopener">Österreichische Datenschutzbehörde</a>, Barichgasse 40–42, 1030 Wien.</p>
+    </article>
+  </div>
+</main>
+<footer>
+  <a href="index.html">Startseite</a> · <a href="kurs.html">Kinderkurs</a> · <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a>
+</footer>
+</body>
+</html>
