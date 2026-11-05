@@ -1339,6 +1339,9 @@ function renderFinish(){
     '<div class="two"><div><h3>' + (f.team === 2 ? 'Das können wir jetzt' : 'Das kann ich jetzt') + '</h3><ul>' + SKILLS.map(s => '<li>' + s + '</li>').join("") + '</ul></div>' +
     '<div><h3>' + (f.team === 2 ? 'Unser KI-Versprechen' : 'Mein KI-Versprechen') + '</h3><ul>' + (f.pledge.length ? f.pledge.map(k => '<li>' + PLEDGES[k] + '</li>').join("") : "<li>–</li>") + '</ul></div></div>' +
     '<div class="sign"><div>Datum: ' + date + '</div><div>Unterschrift Lehrer*in</div></div>';
+   <footer class="no-print" style="text-align:center;padding:24px 18px 40px;font-size:.95rem;color:var(--soft)">
+  <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a>
+</footer>
   show("finish");
 }
 $("#finToMap").onclick = () => renderMap();
