@@ -8,12 +8,12 @@
 
 <script>
 /* ================================================================
-   EINSTELLUNGEN – hier deine Supabase-Daten eintragen
-   Bleiben die Felder leer, läuft der Kurs im Testmodus und speichert
-   nur auf diesem Gerät.
+   EINSTELLUNGEN
+   Der Kurs speichert nichts auf einem Server. Der Fortschritt steckt
+   im Weiter-Code, den die Kinder in ihr Heft schreiben.
+   TESTVERSION = true: alle Stationen frei wählbar, kein Weiter-Code.
    ================================================================ */
-const SUPABASE_URL = "https://ycyqbkukuvfkdvrgwmja.supabase.co";   // z. B. "https://abcdefgh.supabase.co"
-const SUPABASE_KEY = "sb_publishable_dMTXzCCcogfIeuRXT2YGrg_JGS97V_-";   // der „publishable“ oder „anon“ Key
+const TESTVERSION = false;
 const WERKSTATT_LINK = "index.html";  // Link zurück zur KI-Werkstatt
 </script>
 
@@ -119,6 +119,11 @@ input:focus{border-color:var(--ink);outline:none}
 .hint{font-size:.95rem;color:var(--soft);margin-top:6px}
 .msg{white-space:pre-line;margin-top:14px;padding:10px 14px;border-radius:12px;background:var(--coral-soft);font-weight:700}
 .msg.ok{background:var(--mint-soft)}
+.wcode{display:inline-block;font-family:ui-monospace,Menlo,Consolas,"Courier New",monospace;font-weight:700;font-size:2rem;letter-spacing:.12em;padding:8px 16px;border:3px dashed #22245A;border-radius:14px;background:var(--sun-soft);color:#22245A}
+.codebox{margin-top:18px;padding:12px 16px;border-radius:14px;background:var(--sun-soft);color:#22245A;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.codebox .wcode{font-size:1.4rem;padding:4px 12px;background:#fff}
+#fCode{font-family:ui-monospace,Menlo,Consolas,"Courier New",monospace;font-size:1.6rem;letter-spacing:.12em;text-transform:uppercase}
+.testbanner{background:#FFF3C4;border-bottom:3px solid #22245A;padding:10px 16px;text-align:center;font-weight:700;color:#22245A}
 .testmode{margin-top:16px;padding:10px 14px;border-radius:12px;background:var(--sun-soft);font-size:.92rem}
 
 /* Karte */
@@ -322,6 +327,8 @@ input:focus{border-color:var(--ink);outline:none}
   </div>
 </header>
 
+<div class="testbanner" id="testBanner" hidden>🧪 Testversion für Lehrpersonen: Alle 7 Stationen sind frei wählbar. Es wird nichts gespeichert.</div>
+
 <main>
 
 <!-- ANMELDEN -->
@@ -332,7 +339,7 @@ input:focus{border-color:var(--ink);outline:none}
       <p class="lead">Allein oder zu zweit: Geh mit deinem eigenen Roboter auf die KI-Lernreise! In 7 Stationen findest du heraus, wie Künstliche Intelligenz lernt, probierst echte KI aus und bekommst am Ende ein Abzeichen und ein Zeugnis.</p>
       <div class="pixi-row">
         <svg class="pixi" aria-hidden="true"><use href="#pixi"/></svg>
-        <div class="bubble"><p>Du kannst jederzeit Pause machen. Wenn du wiederkommst, geht es genau dort weiter, wo du aufgehört hast.</p></div>
+        <div class="bubble"><p>Du kannst jederzeit Pause machen. Dann bekommst du einen <b>Weiter-Code</b>. Damit geht es nächstes Mal genau dort weiter, wo du aufgehört hast.</p></div>
       </div>
       <p style="font-size:.95rem;color:var(--soft)">Dauer: etwa 2 bis 3 Stunden, aufgeteilt auf mehrere Tage. <a href="#" id="backLink">Zurück zur KI-Werkstatt</a></p>
     </div>
@@ -343,40 +350,17 @@ input:focus{border-color:var(--ink);outline:none}
         <button class="tab" role="tab" id="tabBack" aria-selected="false" type="button">Ich war schon da</button>
       </div>
       <form id="loginForm" autocomplete="off">
-        <div id="newName">
-          <p style="font-weight:700;margin:0 0 8px">Dein geheimer Lern-Name</p>
-          <div class="namecard"><span class="lname" id="genName"></span><button class="btn small" type="button" id="reroll">🔄 Anderer Name</button></div>
-          <div class="why-box">🕵️ <b>Warum kein echter Name?</b> Im Internet verraten wir nicht, wer wir wirklich sind. Darum bekommst du einen Lern-Namen. Deinen echten Namen schreibst du hier nirgends hin, auch nicht ins Passwort.</div>
+        <div id="newBox">
+          <div class="why-box" style="margin-top:0">🕵️ <b>Hier verrätst du nichts über dich.</b> Du brauchst keinen Namen und kein Passwort. Wenn du Pause machst, bekommst du einen Weiter-Code. Den schreibst du in dein Heft.</div>
         </div>
-        <div id="oldName" hidden>
-          <label for="fName">Dein Lern-Name</label>
-          <input type="text" id="fName" maxlength="30" autocapitalize="off" spellcheck="false">
-          <p class="hint">So wie er in deinem Heft steht, zum Beispiel „Nebeldrache42“.</p>
-        </div>
-
-        <label for="fPw" id="pwLabel">Denk dir ein Passwort aus</label>
-        <div class="pwrow">
-          <input type="password" id="fPw" maxlength="60" required>
-          <button class="btn small" type="button" id="eye" aria-label="Passwort zeigen">👁️</button>
-        </div>
-        <div id="pwHelp">
-          <div class="meter" id="meter" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-          <p class="hint" id="meterText" aria-live="polite" style="margin-top:0">Wie stark ist dein Passwort?</p>
-          <ul class="pwcheck" id="pwcheck">
-            <li data-k="len">mindestens 8 Zeichen lang</li>
-            <li data-k="num">eine Zahl</li>
-            <li data-k="mix">Groß- und Kleinbuchstaben oder ein Zeichen wie - ! #</li>
-            <li data-k="safe">nicht leicht zu erraten: kein 1234, kein Name, kein Geburtsjahr</li>
-          </ul>
-          <div class="tipbox">💡 <b>Der Trick für starke Passwörter:</b> Nimm 3 Wörter, die gar nicht zusammenpassen, und eine Zahl. Zum Beispiel <b>Gurke-Rakete-Socke5</b>. Das ist lang, lustig und leicht zu merken. Erfinde aber dein eigenes!</div>
-          <label for="fPw2">Passwort noch einmal</label>
-          <input type="password" id="fPw2" maxlength="60">
-          <label class="agree"><input type="checkbox" id="fNoted"><span>Ich habe meinen Lern-Namen und mein Passwort in mein Heft geschrieben. Mein Passwort verrate ich niemandem, nur meiner Lehrerin oder meinem Lehrer.</span></label>
+        <div id="backBox" hidden>
+          <label for="fCode">Dein Weiter-Code</label>
+          <input type="text" id="fCode" maxlength="12" autocapitalize="characters" spellcheck="false" autocomplete="off" placeholder="z. B. K7RM-4XQ2">
+          <p class="hint">So wie er in deinem Heft steht. Den Strich in der Mitte kannst du weglassen.</p>
         </div>
         <div style="margin-top:18px"><button class="btn go" type="submit" id="loginBtn">Los geht’s!</button></div>
         <div class="msg" id="loginMsg" hidden></div>
       </form>
-      <div class="testmode" id="testNote" hidden><b>Testmodus:</b> Supabase ist noch nicht eingetragen. Der Fortschritt wird nur in diesem Browser gespeichert.</div>
     </div>
   </div>
 </section>
@@ -390,14 +374,13 @@ input:focus{border-color:var(--ink);outline:none}
       <button class="choice-card" data-team="1" type="button" aria-pressed="false"><span class="big" aria-hidden="true">🧒</span><b>Allein</b>Ich mache die Reise selbst.</button>
       <button class="choice-card" data-team="2" type="button" aria-pressed="false"><span class="big" aria-hidden="true">🧒🧒</span><b>Zu zweit</b>Wir machen die Reise gemeinsam.</button>
     </div>
-    <div class="why-box" id="teamInfo" hidden>👥 <b>So klappt’s zu zweit:</b> Ihr teilt euch einen Lern-Namen und ein Passwort. Wechselt euch ab: Eine Person liest vor, die andere klickt. Besprecht jede Antwort, bevor ihr klickt. Macht die Reise immer gemeinsam weiter.</div>
+    <div class="why-box" id="teamInfo" hidden>👥 <b>So klappt’s zu zweit:</b> Ihr bekommt einen gemeinsamen Weiter-Code. Wechselt euch ab: Eine Person liest vor, die andere klickt. Besprecht jede Antwort, bevor ihr klickt. Macht die Reise immer gemeinsam weiter.</div>
 
     <h2 style="margin-top:36px" id="robHead">Such dir deinen Roboter aus!</h2>
     <div class="robots" id="robotGrid"></div>
-    <label for="robName" id="robLabel">Wie soll dein Roboter heißen?</label>
-    <input type="text" id="robName" maxlength="14" autocomplete="off" style="max-width:360px">
-    <div class="sugg" id="robSugg"></div>
-    <p class="hint">Gib deinem Roboter einen Fantasienamen. Er begleitet dich auf der ganzen Reise.</p>
+    <p style="font-weight:700;margin:24px 0 0" id="robLabel">Wie soll dein Roboter heißen?</p>
+    <div class="sugg" id="robSugg" role="group" aria-labelledby="robLabel"></div>
+    <p class="hint">Such dir einen Namen aus. Dein Roboter begleitet dich auf der ganzen Reise.</p>
     <div style="margin-top:24px"><button class="btn go" id="setupDone" type="button" disabled>Los geht’s mit meinem Roboter!</button></div>
   </div>
 </section>
@@ -412,6 +395,7 @@ input:focus{border-color:var(--ink);outline:none}
     <p style="margin:0;font-weight:700" id="progText"></p>
     <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="7" id="progBar"><span></span></div>
     <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap" id="mapActions"></div>
+    <div class="codebox" id="mapCode" hidden>🔑 <span>Dein Weiter-Code:</span> <span class="wcode" id="mapCodeVal"></span></div>
     <ol class="trail" id="trail"></ol>
   </div>
 </section>
@@ -589,83 +573,83 @@ const SKILLS = [
 ];
 
 /* ================================================================
-   SPEICHERN (Supabase oder Testmodus)
+   WEITER-CODE
+   Der ganze Fortschritt steckt in 8 Zeichen, z. B. K7RM-4XQ2.
+   Es wird nichts auf einem Server gespeichert.
+   Aufbau: 32 Bit Fortschritt + 8 Bit Prüfsumme. Ein Tippfehler
+   wird fast immer erkannt (Trefferquote 255 von 256).
    ================================================================ */
-const ONLINE = !!(SUPABASE_URL && SUPABASE_KEY);
+const ROBO_NAMES = ["Bolti","Zippi","Lumi","Robi","Kiki","Funki","Bit","Nova","Sprocki","Tüfti","Kugli","Kasti","Miezi","Blinki","Pieps","Zacki"];
+const ABC = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+const PLEDGE_SETS = [];
+for(let a = 0; a < 6; a++) for(let b = a + 1; b < 6; b++) for(let c = b + 1; c < 6; c++) PLEDGE_SETS.push([a, b, c]);
+const RADIX = {team:15, name:16, s:8, field:20, star:5};
+const MAXVAL = 15 * 16 * 8 * 20 * Math.pow(5, 7);
 
-async function rpc(fn, body){
-  const h = {"Content-Type":"application/json","apikey":SUPABASE_KEY};
-  if(SUPABASE_KEY.startsWith("eyJ")) h.Authorization = "Bearer " + SUPABASE_KEY;
-  let r;
-  try{
-    r = await fetch(SUPABASE_URL.replace(/\/$/,"") + "/rest/v1/rpc/" + fn, {method:"POST", headers:h, body:JSON.stringify(body)});
-  }catch(e){ throw new Error("NETZ"); }
-  const t = await r.text(); let d = null;
-  try{ d = t ? JSON.parse(t) : null; }catch(e){}
-  if(!r.ok){
-    const e = new Error((d && d.message) || ("HTTP " + r.status));
-    e.detail = "HTTP " + r.status + (d ? " – " + [d.code, d.message, d.hint].filter(Boolean).join(" · ") : (t ? " – " + t.slice(0, 200) : ""));
-    throw e;
+function mix32(x){
+  x = (x ^ 0x5bd1e995) >>> 0;
+  x = Math.imul(x ^ (x >>> 16), 0x85ebca6b) >>> 0;
+  x = Math.imul(x ^ (x >>> 13), 0xc2b2ae35) >>> 0;
+  return (x ^ (x >>> 16)) >>> 0;
+}
+const check8 = x => mix32(x) & 255;
+const mask32 = c => mix32(0x9e3779b9 + c * 0x01000193);
+
+function progressToCode(f){
+  const rIdx = f.robot ? ROBOTS.findIndex(r => r.id === f.robot.id) + 1 : 0;
+  const team = f.team && rIdx > 0 ? (f.team - 1) * 5 + rIdx + 1 : 0;
+  const name = f.robot ? Math.max(0, ROBO_NAMES.indexOf(f.robot.n)) : 0;
+  const s = Math.min(7, f.pos.s);
+  let field = 0;
+  if(s < 7) field = Math.min(f.pos.i, STATIONS[s].steps.length - 1);
+  else{
+    const k = PLEDGE_SETS.findIndex(p => p.every(x => f.pledge.includes(x)));
+    field = k < 0 ? 0 : k;
   }
-  return d;
+  let stars = 0;
+  for(let k = STATIONS.length - 1; k >= 0; k--){
+    const v = f.stars[STATIONS[k].id];
+    stars = stars * 5 + (v === undefined || v === null ? 0 : 1 + Math.max(0, Math.min(3, v)));
+  }
+  const x = ((((stars * 20 + field) * 8 + s) * 16 + name) * 15 + team) >>> 0;
+  const c = check8(x), y = (x ^ mask32(c)) >>> 0;
+  let v = c * 4294967296 + y, out = "";
+  for(let k = 0; k < 8; k++){ out = ABC[v % 32] + out; v = Math.floor(v / 32); }
+  return out.slice(0, 4) + "-" + out.slice(4);
 }
 
-const LOCAL_KEY = "kikurs_testmodus";
-function localDB(){ try{ return JSON.parse(localStorage.getItem(LOCAL_KEY)) || {}; }catch(e){ return {}; } }
-function localSet(db){ try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(db)); }catch(e){} }
-async function hashPw(p){
-  try{
-    const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("kikurs:" + p));
-    return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("");
-  }catch(e){ return "plain:" + p; }
-}
-
-const api = {
-  async register(n, p){
-    if(ONLINE) return rpc("kikurs_registrieren", {p_name:n, p_passwort:p});
-    n = n.trim();
-    if(n.length < 2 || n.length > 30) throw new Error("NAME_LAENGE");
-    if(p.length < 4) throw new Error("PASSWORT_LAENGE");
-    const db = localDB(), k = n.toLowerCase();
-    if(db[k]) throw new Error("NAME_VERGEBEN");
-    db[k] = {name:n, h:await hashPw(p), f:{}}; localSet(db);
-    return {name:n, fortschritt:{}};
-  },
-  async login(n, p){
-    if(ONLINE) return rpc("kikurs_anmelden", {p_name:n, p_passwort:p});
-    const u = localDB()[n.trim().toLowerCase()];
-    if(!u || u.h !== await hashPw(p)) throw new Error("FALSCH");
-    return {name:u.name, fortschritt:u.f};
-  },
-  async save(n, p, f){
-    if(ONLINE) return rpc("kikurs_speichern", {p_name:n, p_passwort:p, p_fortschritt:f});
-    const db = localDB(), k = n.trim().toLowerCase();
-    if(!db[k]) throw new Error("FALSCH");
-    db[k].f = f; localSet(db); return true;
+function codeToProgress(code){
+  const t = String(code).toUpperCase().replace(/O/g, "0").replace(/[IL]/g, "1").replace(/U/g, "V").replace(/[^0-9A-Z]/g, "");
+  if(t.length !== 8) return null;
+  let v = 0;
+  for(const ch of t){ const d = ABC.indexOf(ch); if(d < 0) return null; v = v * 32 + d; }
+  const c = Math.floor(v / 4294967296), y = v % 4294967296;
+  let x = (y ^ mask32(c)) >>> 0;
+  if(check8(x) !== c || x >= MAXVAL) return null;
+  const team = x % 15; x = Math.floor(x / 15);
+  const name = x % 16; x = Math.floor(x / 16);
+  const s = x % 8; x = Math.floor(x / 8);
+  const field = x % 20; x = Math.floor(x / 20);
+  const f = {pos:{s, i:0}, done:STATIONS.slice(0, s).map(st => st.id), stars:{}, pledge:[], finished:null, team:null, robot:null};
+  for(let k = 0; k < STATIONS.length; k++){
+    const d = x % 5; x = Math.floor(x / 5);
+    if(d > 0){ if(k > s) return null; f.stars[STATIONS[k].id] = d - 1; }
   }
-};
-
-const ERR = {
-  NAME_VERGEBEN:"Diesen Lern-Namen gibt es schon.",
-  FALSCH:"Lern-Name oder Passwort stimmen nicht. Schau in deinem Heft nach!",
-  NAME_LAENGE:"Der Lern-Name muss 2 bis 30 Zeichen lang sein.",
-  PASSWORT_LAENGE:"Das Passwort ist zu kurz.",
-  NETZ:"Keine Verbindung zum Internet. Prüf die Verbindung und versuch es nochmal."
-};
-function errText(e){
-  if(ERR[e.message]) return ERR[e.message];
-  const m = e.detail || e.message || "unbekannt";
-  let t = "Da ist etwas schiefgegangen. Bitte sag deiner Lehrerin oder deinem Lehrer Bescheid.";
-  if(/Invalid API key|No API key|apikey|HTTP 401/i.test(m)) t = "Die Verbindung zu Supabase klappt nicht. Der Key oben in kurs.html stimmt vermutlich nicht.";
-  else if(/PGRST202|Could not find the function|HTTP 404/i.test(m)) t = "Die Supabase-Funktionen wurden nicht gefunden. Bitte supabase-setup.sql im SQL Editor ausführen.";
-  else if(/permission denied/i.test(m)) t = "Supabase verweigert den Zugriff. Bitte supabase-setup.sql noch einmal komplett ausführen.";
-  return t + "\n\nTechnische Info: " + m;
+  if(s < 7){ if(field >= STATIONS[s].steps.length) return null; f.pos.i = field; }
+  else{ f.pledge = PLEDGE_SETS[field].slice(); f.finished = new Date().toISOString().slice(0, 10); }
+  if(team > 0){
+    f.team = team > 5 ? 2 : 1;
+    const rr = (team - 1) % 5; const r = rr >= 1 ? ROBOTS[rr - 1] : null;
+    if(!r) return null;
+    f.robot = {id:r.id, n:ROBO_NAMES[name]};
+  }else if(name !== 0 || s > 0 || field > 0) return null;
+  return f;
 }
 
 /* ================================================================
    ZUSTAND
    ================================================================ */
-let S = null;               // {name, pw, f}
+let S = null;               // {f}
 let view = {s:0, i:0};
 let stepDone = false;
 const $ = s => document.querySelector(s);
@@ -685,23 +669,19 @@ function freshProgress(f){
   };
 }
 
-let saveTimer = null;
-function setStatus(k){
-  const el = $("#status");
-  el.className = "status" + (k === "err" ? " err" : "");
-  el.textContent = k === "saving" ? "Speichert …" : k === "ok" ? (ONLINE ? "✓ Gespeichert" : "✓ Gespeichert (Testmodus)") : k === "err" ? "⚠️ Nicht gespeichert – Internet prüfen" : "";
+function currentCode(){ return S ? progressToCode(S.f) : ""; }
+function setStatus(){
+  $("#status").className = "status";
+  $("#status").textContent = TESTVERSION ? "Testversion · nichts wird gespeichert" : "";
 }
-function save(now){
-  if(!S) return Promise.resolve();
-  clearTimeout(saveTimer); setStatus("saving");
-  const run = async () => { try{ await api.save(S.name, S.pw, S.f); setStatus("ok"); }catch(e){ setStatus("err"); } };
-  if(now) return run();
-  saveTimer = setTimeout(run, 500);
+function save(){
+  if(!S || TESTVERSION) return Promise.resolve();
+  const code = currentCode();
+  try{ sessionStorage.setItem("kikurs_code", code); }catch(e){}
+  if($("#mapCodeVal")) $("#mapCodeVal").textContent = code;
   return Promise.resolve();
 }
-
-function setSession(){ try{ sessionStorage.setItem("kikurs_session", JSON.stringify({n:S.name, p:S.pw})); }catch(e){} }
-function clearSession(){ try{ sessionStorage.removeItem("kikurs_session"); }catch(e){} }
+function clearSession(){ try{ sessionStorage.removeItem("kikurs_code"); }catch(e){} }
 
 function show(id){
   ["login","setup","map","station","finish"].forEach(x => $("#" + x).hidden = x !== id);
@@ -713,94 +693,58 @@ function show(id){
    ANMELDEN
    ================================================================ */
 let mode = "new";
-const NA = ["Stern","Mond","Blitz","Sonnen","Wolken","Funken","Pixel","Raketen","Zauber","Schnee","Wirbel","Kometen","Nebel","Glitzer","Donner"];
-const NB = ["fuchs","eule","panda","otter","igel","tiger","delfin","falke","koala","pinguin","biber","luchs","drache","dachs","wal"];
-const pick = a => a[Math.floor(Math.random() * a.length)];
-function newLernName(){ $("#genName").textContent = pick(NA) + pick(NB) + (10 + Math.floor(Math.random() * 90)); $("#fNoted").checked = false; pwUpdate(); }
-
-const BAD = ["1234","12345","123456","1234567","12345678","123456789","passwort","password","qwertz","qwerty","abcd","abcdef","abc123","hallo","hallo123","111111","000000","asdf","asdfgh","gurke-rakete-socke5"];
-function pwCheck(p, name){
-  const low = p.toLowerCase(), stem = (name || "").toLowerCase().replace(/\d+$/, "");
-  const c = {
-    len: p.length >= 8,
-    num: /\d/.test(p),
-    mix: (/[A-ZÄÖÜ]/.test(p) && /[a-zäöüß]/.test(p)) || /[^A-Za-zÄÖÜäöüß0-9]/.test(p),
-    safe: p.length >= 4 && !BAD.includes(low) && !(stem.length > 2 && low.includes(stem)) && !/^\d+$/.test(p) && !/(19|20)\d\d/.test(p) && !/^(.)\1+$/.test(p)
-  };
-  let lvl = 0;
-  if(p.length) lvl = c.safe ? 1 + [c.len, c.num, c.mix].filter(Boolean).length : 1;
-  if(c.safe && p.length >= 14) lvl = 4;
-  return {c, lvl, ok: p.length >= 6 && c.safe};
-}
-function pwUpdate(){
-  if(mode !== "new") return;
-  const p = $("#fPw").value, r = pwCheck(p, $("#genName").textContent);
-  $("#meter").className = "meter l" + r.lvl;
-  $("#pwcheck").querySelectorAll("li").forEach(li => li.classList.toggle("ok", !!p && r.c[li.dataset.k]));
-  $("#meterText").textContent = !p ? "Wie stark ist dein Passwort?"
-    : !r.c.safe ? "😟 Schwach: Das kann jemand leicht erraten."
-    : p.length < 6 ? "😟 Noch zu kurz: mindestens 6 Zeichen."
-    : ["", "😟 Schwach: Mach es länger und mischer.", "🙂 Geht so: Da geht noch mehr!", "💪 Stark!", "🦸 Super stark!"][r.lvl];
-}
-$("#fPw").addEventListener("input", pwUpdate);
-$("#reroll").onclick = newLernName;
-
 function setMode(m){
   mode = m;
   $("#tabNew").setAttribute("aria-selected", m === "new");
   $("#tabBack").setAttribute("aria-selected", m === "back");
-  $("#newName").hidden = m !== "new";
-  $("#oldName").hidden = m !== "back";
-  $("#pwHelp").hidden = m !== "new";
-  $("#pwLabel").textContent = m === "new" ? "Denk dir ein Passwort aus" : "Dein Passwort";
+  $("#newBox").hidden = m !== "new";
+  $("#backBox").hidden = m !== "back";
   $("#loginBtn").textContent = m === "new" ? "Los geht’s!" : "Weitermachen";
   $("#loginMsg").hidden = true;
-  pwUpdate();
 }
 $("#tabNew").onclick = () => setMode("new");
-$("#tabBack").onclick = () => setMode("back");
-$("#eye").onclick = () => {
-  const t = $("#fPw").type === "password" ? "text" : "password";
-  $("#fPw").type = t; $("#fPw2").type = t;
-  $("#eye").setAttribute("aria-label", t === "password" ? "Passwort zeigen" : "Passwort verstecken");
-};
-function loginMsg(t, ok){ const m = $("#loginMsg"); m.textContent = t; m.className = "msg" + (ok ? " ok" : ""); m.hidden = false; }
+$("#tabBack").onclick = () => { setMode("back"); $("#fCode").focus(); };
+function loginMsg(t, ok){ const m = $("#loginMsg"); m.innerHTML = t; m.className = "msg" + (ok ? " ok" : ""); m.hidden = false; }
 
-$("#loginForm").onsubmit = async ev => {
+$("#loginForm").onsubmit = ev => {
   ev.preventDefault();
-  const p = $("#fPw").value;
-  if(mode === "new"){
-    const r = pwCheck(p, $("#genName").textContent);
-    if(!r.ok){ loginMsg("Dein Passwort ist noch zu schwach. Probier den Trick mit den 3 Wörtern und einer Zahl!"); return; }
-    if(p !== $("#fPw2").value){ loginMsg("Die beiden Passwörter sind nicht gleich. Tipp sie nochmal ein."); return; }
-    if(!$("#fNoted").checked){ loginMsg("Schreib zuerst deinen Lern-Namen und dein Passwort ins Heft und setz dann das Häkchen."); return; }
-  }else if(!$("#fName").value.trim() || !p){ loginMsg("Gib deinen Lern-Namen und dein Passwort ein."); return; }
-  $("#loginBtn").disabled = true;
-  try{
-    const r = mode === "new" ? await api.register($("#genName").textContent, p) : await api.login($("#fName").value.trim(), p);
-    startSession(r.name, p, r.fortschritt);
-  }catch(e){
-    if(mode === "new" && e.message === "NAME_VERGEBEN"){
-      newLernName();
-      loginMsg("Diesen Lern-Namen gab es schon. Du hast einen neuen bekommen. Bitte schreib ihn neu ins Heft und setz das Häkchen wieder.");
-    }else loginMsg(errText(e));
-  }
-  $("#loginBtn").disabled = false;
+  if(mode === "new"){ startSession(null); return; }
+  const raw = $("#fCode").value.trim();
+  if(!raw){ loginMsg("Gib deinen Weiter-Code aus dem Heft ein."); return; }
+  const f = codeToProgress(raw);
+  if(!f){ loginMsg("Dieser Code stimmt leider nicht. Schau genau in dein Heft: Ist jedes Zeichen richtig? Wenn es nicht klappt, frag deine Lehrerin oder deinen Lehrer."); return; }
+  startSession(f);
 };
 
-function startSession(name, pw, f){
-  S = {name, pw, f:freshProgress(f)};
-  setSession();
-  $("#fPw").value = ""; $("#fPw2").value = "";
+function startSession(f){
+  S = {f:freshProgress(f)};
+  $("#fCode").value = "";
+  setStatus();
+  save();
   applyRobot();
   if(!S.f.team || !S.f.robot) renderSetup(); else renderMap();
 }
 
-$("#pauseBtn").onclick = async () => {
-  await save(true);
-  clearSession();
-  try{ sessionStorage.setItem("kikurs_bye", "1"); }catch(e){}
-  location.reload();
+$("#pauseBtn").onclick = () => {
+  if(TESTVERSION){ location.reload(); return; }
+  const code = currentCode();
+  const root = $("#overlayRoot");
+  root.innerHTML = '<div class="overlay" role="dialog" aria-modal="true" aria-labelledby="pauseT"><div class="card">' +
+    '<span class="sticker" aria-hidden="true">⏸️</span><h2 id="pauseT">Pause!</h2>' +
+    '<p>Schreib diesen <b>Weiter-Code</b> in dein Heft. Damit geht es nächstes Mal genau hier weiter.</p>' +
+    '<p><span class="wcode">' + code + '</span></p>' +
+    '<label class="agree" style="text-align:left"><input type="checkbox" id="pauseOk"><span>Ich habe den Code in mein Heft geschrieben.</span></label>' +
+    '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px">' +
+    '<button class="btn go" type="button" id="pauseBye" disabled>Fertig – bis bald!</button>' +
+    '<button class="btn" type="button" id="pauseBack">Doch weitermachen</button></div></div></div>';
+  $("#pauseOk").onchange = () => { $("#pauseBye").disabled = !$("#pauseOk").checked; };
+  $("#pauseBack").onclick = () => { root.innerHTML = ""; };
+  $("#pauseBye").onclick = () => {
+    clearSession();
+    try{ sessionStorage.setItem("kikurs_bye", code); }catch(e){}
+    location.reload();
+  };
+  $("#pauseOk").focus();
 };
 
 /* ================================================================
@@ -813,9 +757,7 @@ const ROBOTS = [
   {id:"kasten", label:"Kasti", svg:'<rect x="53" y="2" width="14" height="12" rx="3" fill="#FFC83D" stroke="#22245A" stroke-width="3"/><line x1="60" y1="14" x2="60" y2="24" stroke="#22245A" stroke-width="4"/><circle cx="12" cy="52" r="7" fill="#FFC83D" stroke="#22245A" stroke-width="3"/><circle cx="108" cy="52" r="7" fill="#FFC83D" stroke="#22245A" stroke-width="3"/><rect x="18" y="24" width="84" height="56" rx="10" fill="#FF6B8B" stroke="#22245A" stroke-width="4"/><rect x="28" y="35" width="64" height="24" rx="12" fill="#22245A"/><rect x="38" y="41" width="15" height="12" rx="4" fill="#7CF5C9"/><rect x="67" y="41" width="15" height="12" rx="4" fill="#7CF5C9"/><rect x="44" y="65" width="32" height="7" rx="3.5" fill="#fff" stroke="#22245A" stroke-width="2"/><rect x="34" y="82" width="52" height="32" rx="8" fill="#FFC83D" stroke="#22245A" stroke-width="4"/><rect x="43" y="91" width="10" height="7" rx="2" fill="#FF6B8B"/><rect x="58" y="91" width="19" height="7" rx="2" fill="#3FA9F0"/><rect x="43" y="102" width="34" height="5" rx="2.5" fill="#22245A" opacity=".25"/>'},
   {id:"katze", label:"Miezi", svg:'<path d="M24 46 L28 10 L54 32Z" fill="#5FD8B0" stroke="#22245A" stroke-width="4" stroke-linejoin="round"/><path d="M96 46 L92 10 L66 32Z" fill="#5FD8B0" stroke="#22245A" stroke-width="4" stroke-linejoin="round"/><path d="M31 36 L33 20 L45 31Z" fill="#FF6B8B"/><path d="M89 36 L87 20 L75 31Z" fill="#FF6B8B"/><circle cx="60" cy="58" r="38" fill="#5FD8B0" stroke="#22245A" stroke-width="4"/><rect x="33" y="42" width="54" height="32" rx="16" fill="#fff" stroke="#22245A" stroke-width="3"/><circle cx="48" cy="56" r="6" fill="#22245A"/><circle cx="72" cy="56" r="6" fill="#22245A"/><circle cx="50" cy="54" r="2" fill="#fff"/><circle cx="74" cy="54" r="2" fill="#fff"/><path d="M56 64 L64 64 L60 68Z" fill="#FF6B8B"/><path d="M14 60 L30 62 M14 70 L30 68 M106 60 L90 62 M106 70 L90 68" stroke="#22245A" stroke-width="2.5" stroke-linecap="round"/><rect x="40" y="94" width="40" height="22" rx="10" fill="#FFC83D" stroke="#22245A" stroke-width="4"/><circle cx="60" cy="105" r="4.5" fill="#FF6B8B"/>'}
 ];
-const NAME_IDEAS = ["Bolti","Zippi","Lumi","Robi","Kiki","Funki","Bit","Nova","Sprocki","Tüfti"];
 let ROBO_NAME = "Pixi";
-const cleanName = v => v.replace(/[^A-Za-zÄÖÜäöüß0-9 \-]/g, "").replace(/\s+/g, " ").slice(0, 14);
 
 function swapNames(root){
   if(ROBO_NAME === "Pixi" || ROBO_NAME.includes("Pixi")) return;
@@ -839,10 +781,8 @@ function applyRobot(){
 }
 
 function renderSetup(){
-  let team = S.f.team, rid = S.f.robot ? S.f.robot.id : null;
-  const nameIn = $("#robName");
-  nameIn.value = S.f.robot ? S.f.robot.n : "";
-  function check(){ $("#setupDone").disabled = !(team && rid && cleanName(nameIn.value).trim().length >= 2); }
+  let team = S.f.team, rid = S.f.robot ? S.f.robot.id : null, rname = S.f.robot ? S.f.robot.n : null;
+  function check(){ $("#setupDone").disabled = !(team && rid && rname); }
   function setTeam(t){
     team = t;
     $("#teamChoice").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.team === t));
@@ -853,6 +793,8 @@ function renderSetup(){
     check();
   }
   $("#teamChoice").querySelectorAll("button").forEach(b => b.onclick = () => setTeam(+b.dataset.team));
+  const sg = $("#robSugg");
+  function markName(){ sg.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.textContent === rname)); }
   const g = $("#robotGrid"); g.innerHTML = "";
   ROBOTS.forEach(r => {
     const b = document.createElement("button"); b.type = "button"; b.className = "choice-card";
@@ -861,23 +803,23 @@ function renderSetup(){
     b.onclick = () => {
       rid = r.id;
       g.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
-      if(!nameIn.value.trim()) nameIn.value = r.label;
+      if(!rname){ rname = r.label; markName(); }
       check();
     };
     g.appendChild(b);
   });
-  const sg = $("#robSugg"); sg.innerHTML = "";
-  NAME_IDEAS.slice().sort(() => Math.random() - .5).slice(0, 5).forEach(n => {
+  sg.innerHTML = "";
+  ROBO_NAMES.forEach(n => {
     const b = document.createElement("button"); b.type = "button"; b.className = "pick"; b.textContent = n;
-    b.onclick = () => { nameIn.value = n; check(); };
+    b.onclick = () => { rname = n; markName(); check(); };
     sg.appendChild(b);
   });
-  nameIn.oninput = () => { const c = cleanName(nameIn.value); if(c !== nameIn.value) nameIn.value = c; check(); };
-  $("#setupDone").onclick = async () => {
+  markName();
+  $("#setupDone").onclick = () => {
     S.f.team = team;
-    S.f.robot = {id:rid, n:cleanName(nameIn.value).trim()};
+    S.f.robot = {id:rid, n:rname};
     applyRobot();
-    await save(true);
+    save();
     renderMap();
   };
   if(team) setTeam(team);
@@ -894,11 +836,11 @@ function starText(n){ n = n || 0; return "★".repeat(n) + '<span class="off">' 
 
 function renderMap(){
   const f = S.f, done = f.done.length;
-  const two = f.team === 2, who = (two ? "Team " : "") + "<b>" + esc(S.name) + "</b>";
+  const two = f.team === 2;
   const me = "Ich bin <b>" + esc(ROBO_NAME) + "</b> und begleite " + (two ? "euch" : "dich") + ". ";
-  const hello = done === 0 ? "Hallo " + who + "! " + me + (two ? "Schön, dass ihr da seid. Startet" : "Schön, dass du da bist. Starte") + " mit Station 1. Jede Station dauert etwa 15 bis 30 Minuten."
-    : done >= STATIONS.length ? "Wow, " + who + ", " + (two ? "ihr habt alle Stationen geschafft! Ihr seid jetzt KI-Entdecker*innen. Holt euch euer" : "du hast alle Stationen geschafft! Du bist jetzt KI-Entdecker*in. Hol dir dein") + " Zeugnis!"
-    : "Willkommen zurück, " + who + "! " + (two ? "Ihr habt" : "Du hast") + " schon " + done + " von " + STATIONS.length + " Stationen geschafft. Weiter geht’s!";
+  const hello = done === 0 ? "Hallo" + (two ? " ihr zwei" : "") + "! " + me + (two ? "Schön, dass ihr da seid. Startet" : "Schön, dass du da bist. Starte") + " mit Station 1. Jede Station dauert etwa 15 bis 30 Minuten."
+    : done >= STATIONS.length ? "Wow, " + (two ? "ihr habt alle Stationen geschafft! Ihr seid jetzt KI-Entdecker*innen. Holt euch euer" : "du hast alle Stationen geschafft! Du bist jetzt KI-Entdecker*in. Hol dir dein") + " Zeugnis!"
+    : "Willkommen zurück! " + (two ? "Ihr habt" : "Du hast") + " schon " + done + " von " + STATIONS.length + " Stationen geschafft. Weiter geht’s!";
   $("#mapHello").innerHTML = hello;
   $("#progText").textContent = done + " von " + STATIONS.length + " Stationen geschafft";
   $("#progBar").setAttribute("aria-valuenow", done);
@@ -916,7 +858,7 @@ function renderMap(){
   const tr = $("#trail"); tr.innerHTML = "";
   STATIONS.forEach((st, k) => {
     const isDone = f.done.includes(st.id);
-    const unlocked = isDone || k <= f.pos.s;
+    const unlocked = TESTVERSION || isDone || k <= f.pos.s;
     const cur = !isDone && k === f.pos.s;
     const li = document.createElement("li");
     li.className = "stop" + (isDone ? " done" : "") + (cur ? " current" : "") + (!unlocked ? " locked" : "");
@@ -936,6 +878,8 @@ function renderMap(){
     }
     tr.appendChild(li);
   });
+  $("#mapCode").hidden = TESTVERSION;
+  $("#mapCodeVal").textContent = currentCode();
   show("map");
 }
 
@@ -1004,6 +948,7 @@ function celebrate(st, all){
   root.innerHTML = '<div class="confetti">' + conf + '</div><div class="overlay" role="dialog" aria-modal="true" aria-labelledby="celT"><div class="card">' +
     '<span class="sticker" aria-hidden="true">' + st.emoji + '</span><h2 id="celT">Station geschafft!</h2>' +
     '<p>Du hast den Sticker <b>„' + st.title + '“</b> gesammelt.' + (S.f.stars[st.id] !== undefined ? '<br><span class="stars" style="font-size:1.6rem">' + starText(S.f.stars[st.id]) + '</span>' : "") + '</p>' +
+    (TESTVERSION ? "" : '<p style="font-size:.95rem">Falls die Zeit um ist, schreib diesen Weiter-Code in dein Heft:<br><span class="wcode" style="font-size:1.4rem;margin-top:6px">' + currentCode() + '</span></p>') +
     '<button class="btn go" type="button" id="celBtn">' + (all ? "🏅 Zum Abzeichen" : "🗺️ Zur Karte") + '</button></div></div>';
   const b = $("#celBtn"); b.focus();
   b.onclick = () => { root.innerHTML = ""; all ? renderFinish() : renderMap(); };
@@ -1308,7 +1253,7 @@ function badgeSVG(){
 function renderFinish(){
   const f = S.f;
   $("#badgeWrap").innerHTML = badgeSVG();
-  $("#finTitle").textContent = "Herzlichen Glückwunsch" + (S.f.team === 2 ? ", Team " : ", ") + S.name + "!";
+  $("#finTitle").textContent = "Herzlichen Glückwunsch" + (S.f.team === 2 ? ", ihr zwei!" : "!");
   const date = f.finished ? new Date(f.finished + "T12:00:00").toLocaleDateString("de-AT", {day:"numeric", month:"long", year:"numeric"}) : "";
   const total = STATIONS.reduce((a, st) => a + (f.stars[st.id] || 0), 0);
   $("#zeugnis").innerHTML =
@@ -1316,7 +1261,7 @@ function renderFinish(){
     '<h2>Zeugnis</h2><p class="sub">KI-Lernreise mit Pixi</p>' +
     '<p style="text-align:center;margin:0">Hiermit wird bestätigt, dass</p>' +
     '<div class="hand"><span></span>' + (f.team === 2 ? '<span></span>' : '') + '</div>' +
-    '<p class="lern">Lern-Name: ' + esc(S.name) + ', Roboter: ' + esc(ROBO_NAME) + '<br>Echte Namen bitte erst nach dem Ausdrucken mit der Hand eintragen.</p>' +
+    '<p class="lern">Roboter: ' + esc(ROBO_NAME) + '<br>Echte Namen bitte erst nach dem Ausdrucken mit der Hand eintragen.</p>' +
     '<p style="text-align:center">' + (f.team === 2 ? 'gemeinsam alle 7 Stationen der KI-Lernreise erfolgreich abgeschlossen haben und damit<br><b>KI-Entdecker*innen</b> sind.' : 'alle 7 Stationen der KI-Lernreise erfolgreich abgeschlossen hat und damit<br><b>KI-Entdecker*in</b> ist.') + '</p>' +
     '<table>' + STATIONS.map((st, k) => '<tr><td>' + st.emoji + ' ' + (k + 1) + '. ' + st.title + '</td><td class="stars">' + starText(f.stars[st.id]) + '</td></tr>').join("") +
     '<tr><td><b>Sterne gesamt</b></td><td><b>' + total + ' von ' + (STATIONS.length * 3) + '</b></td></tr></table>' +
@@ -1331,18 +1276,20 @@ $("#finToMap").onclick = () => renderMap();
    START
    ================================================================ */
 $("#backLink").href = WERKSTATT_LINK;
-$("#testNote").hidden = ONLINE;
+$("#testBanner").hidden = !TESTVERSION;
+setStatus();
 setMode("new");
-newLernName();
-(async () => {
-  let bye = null;
-  try{ bye = sessionStorage.getItem("kikurs_bye"); sessionStorage.removeItem("kikurs_bye"); }catch(e){}
-  if(bye){ setMode("back"); show("login"); loginMsg("Super gemacht! Bis bald. Melde dich nächstes Mal mit „Ich war schon da“, deinem Lern-Namen und deinem Passwort an.", true); return; }
-  let ses = null;
-  try{ ses = JSON.parse(sessionStorage.getItem("kikurs_session")); }catch(e){}
-  if(ses && ses.n && ses.p){
-    try{ const r = await api.login(ses.n, ses.p); startSession(r.name, ses.p, r.fortschritt); return; }catch(e){ clearSession(); }
+(() => {
+  if(TESTVERSION){ show("login"); return; }
+  let bye = null, code = null;
+  try{ bye = sessionStorage.getItem("kikurs_bye"); sessionStorage.removeItem("kikurs_bye"); code = sessionStorage.getItem("kikurs_code"); }catch(e){}
+  if(bye){
+    setMode("back"); show("login");
+    loginMsg("Super gemacht! Bis bald. Dein Weiter-Code ist <b>" + esc(bye) + "</b>. Nächstes Mal klickst du auf „Ich war schon da“ und gibst ihn ein.", true);
+    return;
   }
+  const f = code ? codeToProgress(code) : null;
+  if(f){ startSession(f); return; }
   show("login");
 })();
 </script>
