@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Testversion – KI-Lernreise mit Pixi – Selbstlernkurs für Kinder</title>
 <meta name="description" content="Ein Selbstlernkurs für Kinder von 8 bis 10 Jahren: In sieben Stationen lernen sie mit dem Roboter Pixi, wie Künstliche Intelligenz funktioniert, und bekommen am Ende ein Abzeichen und ein Zeugnis.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
 
 <script>
 /* ================================================================
@@ -54,7 +51,7 @@ const WERKSTATT_LINK = "index.html";  // Link zurück zur KI-Werkstatt
 html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 80px)}
 body{
   margin:0; min-height:100vh;
-  font-family:"Atkinson Hyperlegible", Verdana, "Segoe UI", sans-serif;
+  font-family:Verdana, "Segoe UI", system-ui, -apple-system, sans-serif;
   font-size:1.15rem; line-height:1.6; color:var(--ink);
   background:
     radial-gradient(circle at 8% 12%, var(--sun-soft) 0 120px, transparent 121px),
@@ -64,7 +61,7 @@ body{
   background-attachment:fixed;
 }
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--card)}
-h1,h2,h3{font-family:"Baloo 2", "Comic Sans MS", "Trebuchet MS", sans-serif;line-height:1.15;margin:0 0 .4em}
+h1,h2,h3{font-family:ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", "Trebuchet MS", "Segoe UI", sans-serif;line-height:1.15;margin:0 0 .4em}
 h1{font-size:clamp(2.1rem,6vw,3.2rem);font-weight:800}
 h2{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800}
 h3{font-size:1.4rem;font-weight:700}
@@ -79,7 +76,7 @@ a{color:var(--ink)}
 /* Kopfzeile */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--card);border-bottom:3px solid var(--line)}
 .top .wrap{display:flex;align-items:center;gap:12px;min-height:64px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:8px;font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.25rem;text-decoration:none;color:var(--ink);margin-right:auto}
+.brand{display:flex;align-items:center;gap:8px;font-family:ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", "Trebuchet MS", "Segoe UI", sans-serif;font-weight:800;font-size:1.25rem;text-decoration:none;color:var(--ink);margin-right:auto}
 .brand svg{width:40px;height:40px}
 .status{font-size:.9rem;color:var(--soft);white-space:nowrap}
 .status.err{color:var(--wrong);font-weight:700}
@@ -155,7 +152,7 @@ input:focus{border-color:var(--ink);outline:none}
 .dots i.now{background:var(--sun);outline:2px solid var(--ink)}
 .nav{display:flex;justify-content:space-between;gap:12px;margin-top:22px;flex-wrap:wrap}
 .nav .need{font-size:.95rem;color:var(--soft);align-self:center;flex:1;text-align:center;min-width:180px}
-.task{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:1.35rem;margin-bottom:12px}
+.task{font-family:ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", "Trebuchet MS", "Segoe UI", sans-serif;font-weight:700;font-size:1.35rem;margin-bottom:12px}
 
 /* Auswahl & Quiz */
 .opts{display:grid;gap:10px}
@@ -197,7 +194,7 @@ input:focus{border-color:var(--ink);outline:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* Wortspiel */
-.sentence{font-size:1.5rem;font-family:"Baloo 2",sans-serif;font-weight:700;margin:10px 0 14px}
+.sentence{font-size:1.5rem;font-family:ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", "Trebuchet MS", "Segoe UI", sans-serif;font-weight:700;margin:10px 0 14px}
 .sentence .gap{display:inline-block;min-width:110px;border-bottom:4px dashed var(--ink);text-align:center;color:var(--coral)}
 .bar{display:flex;align-items:center;gap:10px;margin:6px 0}
 .bar .w{width:110px;font-weight:700}
@@ -234,7 +231,7 @@ input:focus{border-color:var(--ink);outline:none}
 .zeugnis{background:#fff;color:#22245A;border:6px double #22245A;border-radius:12px;padding:36px 40px;position:relative;max-width:780px;margin:0 auto}
 .zeugnis h2{text-align:center;font-size:2.4rem;margin-bottom:0}
 .zeugnis .sub{text-align:center;color:#5A5E8C;margin-bottom:22px}
-.zeugnis .name{text-align:center;font-family:"Baloo 2",sans-serif;font-size:2.2rem;font-weight:800;border-bottom:3px solid #22245A;margin:8px auto 18px;max-width:420px}
+.zeugnis .name{text-align:center;font-family:ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", "Trebuchet MS", "Segoe UI", sans-serif;font-size:2.2rem;font-weight:800;border-bottom:3px solid #22245A;margin:8px auto 18px;max-width:420px}
 .zeugnis table{width:100%;border-collapse:collapse;margin:12px 0 20px}
 .zeugnis td{padding:7px 4px;border-bottom:1px solid #D2DDF0}
 .zeugnis td:last-child{text-align:right}
@@ -248,7 +245,7 @@ input:focus{border-color:var(--ink);outline:none}
 
 /* Lern-Name & Passwort */
 .namecard{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--sun-soft);border:3px dashed var(--ink);border-radius:18px;padding:12px 16px}
-.namecard .lname{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.8rem;flex:1;min-width:180px;letter-spacing:.5px;word-break:break-all}
+.namecard .lname{font-family:ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", "Trebuchet MS", "Segoe UI", sans-serif;font-weight:800;font-size:1.8rem;flex:1;min-width:180px;letter-spacing:.5px;word-break:break-all}
 .why-box{background:var(--sky-soft);border-radius:14px;padding:10px 14px;font-size:.98rem;margin-top:10px}
 .meter{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 4px}
 .meter i{height:12px;border-radius:999px;background:var(--line)}
@@ -270,7 +267,7 @@ input:focus{border-color:var(--ink);outline:none}
 .choice-card[aria-pressed="true"]{border-color:var(--ink);background:var(--sun-soft);box-shadow:0 5px 0 var(--ink)}
 .choice-card .big{font-size:3rem;display:block;line-height:1.2}
 .choice-card svg{width:100px;height:100px;display:block;margin:0 auto 6px}
-.choice-card b{display:block;font-family:"Baloo 2",sans-serif;font-size:1.25rem}
+.choice-card b{display:block;font-family:ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", "Trebuchet MS", "Segoe UI", sans-serif;font-size:1.25rem}
 .sugg{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .teamtip{background:var(--mint-soft);border-radius:14px;padding:8px 14px;font-size:.97rem;margin-bottom:14px}
 .zeugnis .hand{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin:14px 0 6px}
@@ -295,6 +292,7 @@ input:focus{border-color:var(--ink);outline:none}
   .finish{padding:0}
   .zeugnis{border-width:6px;max-width:none}
 }
+.kfoot{text-align:center;padding:18px 16px 32px;font-size:.95rem;color:var(--soft)}.kfoot a{color:inherit}
 </style>
 </head>
 <body>
@@ -451,6 +449,10 @@ input:focus{border-color:var(--ink);outline:none}
 </section>
 
 </main>
+
+<footer class="kfoot no-print">
+  <a href="index.html">KI-Werkstatt</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="impressum.html">Impressum</a>
+</footer>
 
 <div id="overlayRoot"></div>
 
@@ -1297,7 +1299,7 @@ function badgeSVG(){
     '<circle cx="100" cy="92" r="66" fill="#FFE08A" stroke="#22245A" stroke-width="3" stroke-dasharray="6 6"/>' +
     '<use href="#pixi" x="62" y="32" width="76" height="76"/>' +
     '<path id="arcB" d="M42 92 A58 58 0 0 0 158 92" fill="none"/>' +
-    '<text font-family="Baloo 2, sans-serif" font-weight="800" font-size="15" fill="#22245A" letter-spacing="1"><textPath href="#arcB" startOffset="50%" text-anchor="middle">KI-ENTDECKER*IN</textPath></text>' +
+    '<text font-family="Arial Rounded MT Bold, Trebuchet MS, sans-serif" font-weight="800" font-size="15" fill="#22245A" letter-spacing="1"><textPath href="#arcB" startOffset="50%" text-anchor="middle">KI-ENTDECKER*IN</textPath></text>' +
     '</svg>';
 }
 function renderFinish(){
